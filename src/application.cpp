@@ -51,6 +51,7 @@ bool Application::init(HINSTANCE instance) {
 	_toy_parameters_buffer = _render_device.create_constant_buffer(sizeof(ToyParameters));
 	_vertices = _render_device.create_static_vertex_buffer(vertices, sizeof(vertices));
 	_indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
+	_input_layout = _render_device.create_input_layout(vertex_description);
 
 	return true;
 }

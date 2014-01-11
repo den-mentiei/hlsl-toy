@@ -4,6 +4,9 @@
 
 namespace toy {
 
+// Order-dependent on VertexDescription enum
+const unsigned VertexDescription::element_size[VertexDescription::EF_COUNT] = { sizeof(float) * 4, sizeof(float) * 3, sizeof(float) * 2, sizeof(float) };
+
 DXRenderDevice::DXRenderDevice()
 	: _n_constant_buffers(0)
 	, _n_vertex_buffers(0)
@@ -194,6 +197,41 @@ unsigned DXRenderDevice::create_static_index_buffer(const void* const data, cons
 
 	_n_index_buffers++;
 	return _n_index_buffers - 1;
+}
+
+unsigned DXRenderDevice::create_input_layout(const VertexDescription& description) {
+	assert(_n_input_layouts < MAX_INPUT_LAYOUTS);
+
+	// Order-dependent on VertexDescription enum
+	static const char* semantics[] = {
+		"POSITION", "NORMAL", "TEXCOORD", "COLOR"
+	};
+	// Order-dependent on VertexDescription enum, too
+	static const DXGI_FORMAT formats[] = {
+		DXGI_FORMAT_R32G32B32A32_FLOAT,
+		DXGI_FORMAT_R32G32B32_FLOAT,
+		DXGI_FORMAT_R32G32_FLOAT,
+		DXGI_FORMAT_R32_FLOAT,
+	};
+
+	D3D11_INPUT_ELEMENT_DESC layout[VertexDescription::MAX_ELEMENTS];
+	unsigned size = 0;
+	for (unsigned i = 0; i < description.n_elements; ++i) {
+		layout[i].SemanticName = semantics[description.elements[i].semantic];
+		layout[i].SemanticIndex = 0;
+		layout[i].Format = formats[description.elements[i].format];
+		layout[i].InputSlot = 0;
+		layout[i].AlignedByteOffset = size;
+		layout[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		layout[i].InstanceDataStepRate = 0;
+
+		size += VertexDescription::element_size[description.elements[i].format];
+	}
+
+	// TODO: create input layout
+
+	_n_input_layouts++;
+	return _n_input_layouts - 1;
 }
 
 } // namespace toy

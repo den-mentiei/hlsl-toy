@@ -26,6 +26,7 @@ private:
 
 	unsigned _vertices;
 	unsigned _indices;
+	unsigned _input_layout;
 };
 
 } // namespace toy
