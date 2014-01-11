@@ -1,8 +1,13 @@
 #include "dx_render_device.h"
 #include "window.h"
+#include <cassert>
 
 namespace toy {
-	
+
+DXRenderDevice::DXRenderDevice()
+	: _n_constant_buffers(0)
+{}
+
 bool DXRenderDevice::init(const Window& window) {
 	IDXGIFactory* dxgi_factory = nullptr;
 	HRESULT hr = ::CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&dxgi_factory));
@@ -19,7 +24,6 @@ bool DXRenderDevice::init(const Window& window) {
 	dxgi_factory->Release();
 
 	DXGI_SWAP_CHAIN_DESC swapchain_description;
-	memset(&swapchain_description, 0, sizeof(swapchain_description));
 	swapchain_description.BufferDesc.Width = 0;
 	swapchain_description.BufferDesc.Height = 0;
 	// TODO: sRGB option
@@ -103,6 +107,41 @@ bool DXRenderDevice::create_back_buffer_and_dst() {
 	_immediate_device->OMSetRenderTargets(1, &_back_buffer_rtv, _depth_stencil_view.get());
 
 	return true;
+}
+
+unsigned DXRenderDevice::create_constant_buffer(const size_t size) {
+	assert(_n_constant_buffers < MAX_CONSTANT_BUFFERS);
+
+	D3D11_BUFFER_DESC buffer_description;
+	memset(&buffer_description, 0, sizeof(D3D11_BUFFER_DESC));
+	buffer_description.Usage = D3D11_USAGE_DYNAMIC;
+	buffer_description.ByteWidth = size;
+	buffer_description.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	buffer_description.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	buffer_description.MiscFlags = 0;
+
+	HRESULT hr = _device->CreateBuffer(&buffer_description, 0, &_constant_buffers[_n_constant_buffers]);
+	if (FAILED(hr)) {
+		return MAX_CONSTANT_BUFFERS + 1;
+	}
+	_n_constant_buffers++;
+
+	return _n_constant_buffers - 1;
+}
+
+void DXRenderDevice::update_constant_buffer(const unsigned id, const void* const data, const size_t size) {
+	assert(id < _n_constant_buffers);
+	assert(data != nullptr);
+	assert(size > 0);
+
+	D3D11_MAPPED_SUBRESOURCE resource;
+	HRESULT hr = _immediate_device->Map(_constant_buffers[id].get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	if (FAILED(hr)) {
+		return;
+	}
+
+	memcpy(resource.pData, data, size);
+	_immediate_device->Unmap(_constant_buffers[id].get(), 0);
 }
 
 } // namespace toy
