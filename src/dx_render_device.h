@@ -9,6 +9,8 @@ class Window;
 
 class DXRenderDevice {
 	static const unsigned MAX_CONSTANT_BUFFERS = 4;
+	static const unsigned MAX_VERTEX_BUFFERS = 4;
+	static const unsigned MAX_INDEX_BUFFERS = 4;
 public:
 	DXRenderDevice();
 
@@ -21,6 +23,9 @@ public:
 	void update_constant_buffer(const unsigned id, const T& data) {
 		update_constant_buffer(id, &data, sizeof(T));
 	}
+
+	unsigned create_static_vertex_buffer(const void* const data, const size_t size);
+	unsigned create_static_index_buffer(const void* const data, const size_t size);
 private:
 	bool create_back_buffer_and_dst();
 	void setup_buffers();
@@ -35,7 +40,12 @@ private:
 	ComPtr<ID3D11DepthStencilView> _depth_stencil_view;
 
 	ComPtr<ID3D11Buffer> _constant_buffers[MAX_CONSTANT_BUFFERS];
+	ComPtr<ID3D11Buffer> _vertex_buffers[MAX_VERTEX_BUFFERS];
+	ComPtr<ID3D11Buffer> _index_buffers[MAX_INDEX_BUFFERS];
+
 	unsigned _n_constant_buffers;
+	unsigned _n_vertex_buffers;
+	unsigned _n_index_buffers;
 };
 
 } // namespace toy
