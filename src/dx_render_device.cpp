@@ -321,10 +321,28 @@ unsigned DXRenderDevice::create_rasterizer_state() {
 	return _n_rasterizer_states - 1;
 }
 
-unsigned DXRenderDevice::create_blend_state() {
+unsigned DXRenderDevice::create_blend_state(const bool blend_enabled) {
 	assert(_n_blend_states < MAX_BLEND_STATES);
 
-	// TODO:
+	D3D11_RENDER_TARGET_BLEND_DESC rt_bs_description;
+	rt_bs_description.BlendEnable = blend_enabled;
+	rt_bs_description.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	rt_bs_description.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	rt_bs_description.BlendOp = D3D11_BLEND_OP_ADD;
+	rt_bs_description.SrcBlendAlpha = D3D11_BLEND_ONE;
+	rt_bs_description.DestBlendAlpha = D3D11_BLEND_ZERO;
+	rt_bs_description.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	rt_bs_description.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	D3D11_BLEND_DESC bs_description;
+	bs_description.AlphaToCoverageEnable = false;
+	bs_description.IndependentBlendEnable = false;
+	bs_description.RenderTarget[0] = rt_bs_description;
+
+	HRESULT hr = _device->CreateBlendState(&bs_description, &_blend_states[_n_blend_states]);
+	if (FAILED(hr)) {
+		return MAX_BLEND_STATES + 1;
+	}
 
 	_n_blend_states++;
 	return _n_blend_states - 1;

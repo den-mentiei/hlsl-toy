@@ -92,7 +92,7 @@ void Application::init_render() {
 
 	_dst_state = _render_device.create_dst_state(false);
 	_rasterizer_state = _render_device.create_rasterizer_state();
-	_blend_state = _render_device.create_blend_state();
+	_blend_state = _render_device.create_blend_state(false);
 }
 
 void Application::shutdown() {

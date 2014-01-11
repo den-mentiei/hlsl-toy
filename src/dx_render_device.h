@@ -63,7 +63,7 @@ public:
 
 	unsigned create_dst_state(const bool depth_enabled);
 	unsigned create_rasterizer_state();
-	unsigned create_blend_state();
+	unsigned create_blend_state(const bool blend_enabled);
 private:
 	bool create_back_buffer_and_dst();
 	void setup_buffers();
