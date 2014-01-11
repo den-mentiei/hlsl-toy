@@ -15,6 +15,9 @@
     <ClCompile Include="src\window.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\dx_render_device.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\windows.h">
@@ -27,6 +30,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\window.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx_render_device.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\com_ptr.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
