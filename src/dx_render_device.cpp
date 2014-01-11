@@ -56,10 +56,16 @@ bool DXRenderDevice::init(const Window& window) {
 	const unsigned n_feature_levels = sizeof(feature_levels) / sizeof(feature_levels[0]);
 
 	D3D_FEATURE_LEVEL current_feature_level;
-	hr = D3D11CreateDeviceAndSwapChain(adapter.get(), 
-		D3D_DRIVER_TYPE_UNKNOWN, 
-		0, 0, 
-		feature_levels, n_feature_levels, 
+	hr = D3D11CreateDeviceAndSwapChain(
+		adapter.get(),
+		D3D_DRIVER_TYPE_UNKNOWN,
+		0,
+#ifdef _DEBUG
+		D3D11_CREATE_DEVICE_DEBUG,
+#else
+		0,
+#endif
+		feature_levels, n_feature_levels,
 		D3D11_SDK_VERSION,
 		&swapchain_description, &_swap_chain, &_device,
 		&current_feature_level,
@@ -114,6 +120,9 @@ bool DXRenderDevice::create_back_buffer_and_dst() {
 	if (FAILED(hr)) {
 		return false;
 	}
+
+	//_back_buffer_srv
+	//hr = _device->CreateShaderResourceView(_back_buffer.get(),
 
 	return true;
 }
@@ -361,6 +370,9 @@ void DXRenderDevice::render(const Batch& batch) {
 	ID3D11Buffer* constant_buffers[] = { _constant_buffers[batch.constants].get() };
 	_immediate_device->PSSetConstantBuffers(0, 1, constant_buffers);
 
+	//ID3D11ShaderResourceView* srvs[] = { _back_buffer_rtv.get() };
+	//_immediate_device->PSSetShaderResources(0, 1, );
+
 	_immediate_device->OMSetDepthStencilState(_dst_states[batch.dst_state].get(), 0);
 	_immediate_device->OMSetBlendState(_blend_states[batch.blend_state].get(), 0, 0xFFFFFFFF);
 	_immediate_device->RSSetState(_rasterizer_states[batch.rasterizer_state].get());
@@ -386,12 +398,12 @@ void DXRenderDevice::set_viewport(const unsigned w, const unsigned h) {
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
 
-	_immediate_device->RSSetViewports(0, &viewport);
+	_immediate_device->RSSetViewports(1, &viewport);
 }
 
 void DXRenderDevice::start_frame() {
 	ID3D11RenderTargetView* rtvs[] = { _back_buffer_rtv.get() };
-	_immediate_device->OMSetRenderTargets(0, rtvs, _depth_stencil_view.get());
+	_immediate_device->OMSetRenderTargets(1, rtvs, _depth_stencil_view.get());
 }
 
 void DXRenderDevice::end_frame() {

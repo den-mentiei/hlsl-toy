@@ -61,7 +61,7 @@ static const char* ps_shader_code = ""
 "	float4 pos : SV_POSITION;\n"
 "	float2 uv : TEXCOORD;\n"
 "};\n\n"
-"float4 ps_main(PS_Input input) : SV_TARGET {\n"
+"float4 ps_main(PS_Input input) : SV_TARGET0 {\n"
 "	return float4(input.uv.x, input.uv.y, 0.0f, 1.0f);\n"
 "}";
 
@@ -86,6 +86,7 @@ void Application::init_render() {
 	_triangles.start_index = 0;
 	_triangles.stride = sizeof(Vertex);
 	_triangles.count = 6;
+	_triangles.type = DXRenderDevice::Batch::BT_TRIANGLE_LIST;
 
 	_triangles.constants = _render_device.create_constant_buffer(sizeof(ToyParameters));
 

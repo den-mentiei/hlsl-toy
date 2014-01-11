@@ -104,6 +104,7 @@ private:
 	ComPtr<ID3D11Texture2D> _back_buffer;
 	ComPtr<ID3D11Texture2D> _depth_stencil;
 	ComPtr<ID3D11RenderTargetView> _back_buffer_rtv;
+	ComPtr<ID3D11ShaderResourceView> _back_buffer_srv;
 	ComPtr<ID3D11DepthStencilView> _depth_stencil_view;
 
 	ComPtr<ID3D11Buffer> _constant_buffers[MAX_CONSTANT_BUFFERS];
