@@ -56,6 +56,15 @@ static const char* vs_shader_code = ""
 "	return o;\n"
 "}";
 
+static const char* ps_shader_code = ""
+"struct PS_Input {\n"
+"	float4 pos : SV_POSITION;\n"
+"	float2 uv : TEXCOORD;\n"
+"};\n\n"
+"float4 ps_main(PS_Input input) : SV_TARGET {\n"
+"	return float4(input.uv.x, input.uv.y, 0.0f, 1.0f);\n"
+"}";
+
 } // anonymous namespace
 
 bool Application::init(HINSTANCE instance) {
@@ -72,6 +81,8 @@ bool Application::init(HINSTANCE instance) {
 	_vertices = _render_device.create_static_vertex_buffer(vertices, sizeof(vertices));
 	_indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
 	_vs_shader = _render_device.create_vertex_shader(vs_shader_code, std::strlen(vs_shader_code), vertex_description);
+	_ps_shader = _render_device.create_pixel_shader(ps_shader_code, std::strlen(ps_shader_code));
+
 	return true;
 }
 

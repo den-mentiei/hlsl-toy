@@ -15,6 +15,7 @@ DXRenderDevice::DXRenderDevice()
 	, _n_index_buffers(0)
 	, _n_input_layouts(0)
 	, _n_vertex_shaders(0)
+	, _n_pixel_shaders(0)
 {}
 
 bool DXRenderDevice::init(const Window& window) {
