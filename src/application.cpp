@@ -26,6 +26,16 @@ static const unsigned indices[] = {
 	0, 2, 3
 };
 
+static const VertexDescription vertex_description = {
+	// elements
+	{
+		{ VertexDescription::ES_POSITION, VertexDescription::EF_FLOAT3 },
+		{ VertexDescription::ES_TEXCOORD, VertexDescription::EF_FLOAT2 },
+	},
+	// n_elements
+	2
+};
+
 } // anonymous namespace
 
 bool Application::init(HINSTANCE instance) {

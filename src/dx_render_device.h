@@ -7,10 +7,33 @@ namespace toy {
 
 class Window;
 
+struct VertexDescription {
+	enum {
+		MAX_ELEMENTS = 8
+	};
+
+	enum ElementSemantic {
+		ES_POSITION, ES_NORMAL, ES_TEXCOORD, ES_COLOR
+	};
+	enum ElementFormat {
+		EF_FLOAT4, EF_FLOAT3, EF_FLOAT2, EF_FLOAT1
+	};
+
+	struct Element {
+		ElementSemantic semantic;
+		ElementFormat format;
+	};
+	Element elements[MAX_ELEMENTS];
+	unsigned n_elements;
+};
+
 class DXRenderDevice {
-	static const unsigned MAX_CONSTANT_BUFFERS = 4;
-	static const unsigned MAX_VERTEX_BUFFERS = 4;
-	static const unsigned MAX_INDEX_BUFFERS = 4;
+	enum {
+		MAX_CONSTANT_BUFFERS = 4,
+		MAX_VERTEX_BUFFERS = 4,
+		MAX_INDEX_BUFFERS = 4,
+		MAX_INPUT_LAYOUTS = 4
+	};
 public:
 	DXRenderDevice();
 
