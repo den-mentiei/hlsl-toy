@@ -6,6 +6,8 @@ namespace toy {
 
 DXRenderDevice::DXRenderDevice()
 	: _n_constant_buffers(0)
+	, _n_vertex_buffers(0)
+	, _n_index_buffers(0)
 {}
 
 bool DXRenderDevice::init(const Window& window) {
@@ -113,12 +115,12 @@ unsigned DXRenderDevice::create_constant_buffer(const size_t size) {
 	assert(_n_constant_buffers < MAX_CONSTANT_BUFFERS);
 
 	D3D11_BUFFER_DESC buffer_description;
-	memset(&buffer_description, 0, sizeof(D3D11_BUFFER_DESC));
 	buffer_description.Usage = D3D11_USAGE_DYNAMIC;
 	buffer_description.ByteWidth = size;
 	buffer_description.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	buffer_description.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	buffer_description.MiscFlags = 0;
+	buffer_description.StructureByteStride = 0;
 
 	HRESULT hr = _device->CreateBuffer(&buffer_description, 0, &_constant_buffers[_n_constant_buffers]);
 	if (FAILED(hr)) {
@@ -142,6 +144,46 @@ void DXRenderDevice::update_constant_buffer(const unsigned id, const void* const
 
 	memcpy(resource.pData, data, size);
 	_immediate_device->Unmap(_constant_buffers[id].get(), 0);
+}
+
+unsigned DXRenderDevice::create_static_vertex_buffer(const void* const data, const size_t size) {
+	assert(_n_vertex_buffers < MAX_VERTEX_BUFFERS);
+
+	D3D11_BUFFER_DESC buffer_description;
+	buffer_description.Usage = D3D11_USAGE_IMMUTABLE;
+	buffer_description.ByteWidth = size;
+	buffer_description.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buffer_description.CPUAccessFlags = 0;
+	buffer_description.MiscFlags = 0;
+	buffer_description.StructureByteStride = 0;
+
+	HRESULT hr = _device->CreateBuffer(&buffer_description, 0, &_vertex_buffers[_n_vertex_buffers]);
+	if (FAILED(hr)) {
+		return MAX_VERTEX_BUFFERS + 1;
+	}
+
+	_n_vertex_buffers++;
+	return _n_vertex_buffers - 1;
+}
+
+unsigned DXRenderDevice::create_static_index_buffer(const void* const data, const size_t size) {
+	assert(_n_index_buffers < MAX_INDEX_BUFFERS);
+
+	D3D11_BUFFER_DESC buffer_description;
+	buffer_description.Usage = D3D11_USAGE_IMMUTABLE;
+	buffer_description.ByteWidth = size;
+	buffer_description.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	buffer_description.CPUAccessFlags = 0;
+	buffer_description.MiscFlags = 0;
+	buffer_description.StructureByteStride = 0;
+
+	HRESULT hr = _device->CreateBuffer(&buffer_description, 0, &_index_buffers[_n_index_buffers]);
+	if (FAILED(hr)) {
+		return MAX_INDEX_BUFFERS + 1;
+	}
+
+	_n_index_buffers++;
+	return _n_index_buffers - 1;
 }
 
 } // namespace toy
