@@ -292,7 +292,9 @@ void DXRenderDevice::update_pixel_shader(unsigned shader, const char* const code
 	assert(code != nullptr);
 	assert(length > 0);
 
-	// TODO:
+	if (!compile_pixel_shader(code, length, _pixel_shaders[shader])) {
+		// TODO: report errors somehow
+	}
 }
 
 bool DXRenderDevice::compile_pixel_shader(const char* const code, const size_t length, ComPtr<ID3D11PixelShader>& destination) {
