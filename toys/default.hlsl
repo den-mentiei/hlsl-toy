@@ -1,4 +1,5 @@
 cbuffer Parameters {
+	float2 resolution;
 	float time;
 };
 

@@ -108,21 +108,31 @@ void Application::create_scene() {
 }
 
 bool Application::work() {
+	update();
+	render();
+
+	return !_main_window.is_closing();
+}
+
+void Application::update() {
 	_timer.tick();
+	_main_window.update();
+	update_toy_parameters();
+}
 
-	_toy_parameters.time = static_cast<float>(_timer.elapsed());
-	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
-
+void Application::render() {
 	_render_device.start_frame();
 	_render_device.set_viewport(_main_window.width(), _main_window.height());
 	const Float4 clear_color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	_render_device.clear(clear_color);
 	_render_device.render(_triangles);
 	_render_device.end_frame();
+}
 
-	_main_window.update();
-
-	return !_main_window.is_closing();
+void Application::update_toy_parameters() {
+	_toy_parameters.resolution = float2(float(_main_window.width()), float(_main_window.height()));
+	_toy_parameters.time = static_cast<float>(_timer.elapsed());
+	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
 }
 
 void Application::on_keypress_callback(const unsigned key_code, void* userdata) {

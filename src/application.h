@@ -20,6 +20,11 @@ private:
 
 	bool load_toy(const wchar_t* path);
 	void create_scene();
+	
+	void update();
+	void render();
+
+	void update_toy_parameters();
 
 	Timer _timer;
 
@@ -29,6 +34,7 @@ private:
 
 	__declspec(align(16))
 	struct ToyParameters {
+		Float2 resolution;
 		float time;
 	};
 	ToyParameters _toy_parameters;
