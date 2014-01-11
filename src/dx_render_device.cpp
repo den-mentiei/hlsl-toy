@@ -16,6 +16,9 @@ DXRenderDevice::DXRenderDevice()
 	, _n_input_layouts(0)
 	, _n_vertex_shaders(0)
 	, _n_pixel_shaders(0)
+	, _n_dst_states(0)
+	, _n_rasterizer_states(0)
+	, _n_blend_states(0)
 {}
 
 bool DXRenderDevice::init(const Window& window) {
@@ -287,10 +290,16 @@ unsigned DXRenderDevice::create_pixel_shader(const char* const code, const size_
 	return _n_pixel_shaders - 1;
 }
 
-unsigned DXRenderDevice::create_dst_state(const bool depth_enabled, const bool stencil_enabled) {
+unsigned DXRenderDevice::create_dst_state(const bool depth_enabled) {
 	assert(_n_dst_states < MAX_DST_STATES);
 
-	// TODO:
+	CD3D11_DEPTH_STENCIL_DESC dst_description(D3D11_DEFAULT);
+	dst_description.DepthEnable = depth_enabled;
+
+	HRESULT hr = _device->CreateDepthStencilState(&dst_description, &_dst_states[_n_dst_states]);
+	if (FAILED(hr)) {
+		return MAX_DST_STATES + 1;
+	}
 
 	_n_dst_states++;
 	return _n_dst_states - 1;
