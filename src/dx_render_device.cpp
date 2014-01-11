@@ -287,4 +287,31 @@ unsigned DXRenderDevice::create_pixel_shader(const char* const code, const size_
 	return _n_pixel_shaders - 1;
 }
 
+unsigned DXRenderDevice::create_dst_state(const bool depth_enabled, const bool stencil_enabled) {
+	assert(_n_dst_states < MAX_DST_STATES);
+
+	// TODO:
+
+	_n_dst_states++;
+	return _n_dst_states - 1;
+}
+
+unsigned DXRenderDevice::create_rasterizer_state() {
+	assert(_n_rasterizer_states < MAX_RASTERIZER_STATES);
+
+	// TODO:
+
+	_n_rasterizer_states++;
+	return _n_rasterizer_states - 1;
+}
+
+unsigned DXRenderDevice::create_blend_state() {
+	assert(_n_blend_states < MAX_BLEND_STATES);
+
+	// TODO:
+
+	_n_blend_states++;
+	return _n_blend_states - 1;
+}
+
 } // namespace toy

@@ -38,6 +38,9 @@ class DXRenderDevice {
 		MAX_INPUT_LAYOUTS = 4,
 		MAX_VERTEX_SHADERS = 4,
 		MAX_PIXEL_SHADERS = 4,
+		MAX_DST_STATES = 4,
+		MAX_RASTERIZER_STATES = 4,
+		MAX_BLEND_STATES = 4
 	};
 public:
 	DXRenderDevice();
@@ -57,6 +60,10 @@ public:
 
 	unsigned create_vertex_shader(const char* const code, const size_t length, const VertexDescription& vertex_description);
 	unsigned create_pixel_shader(const char* const code, const size_t length);
+
+	unsigned create_dst_state(const bool depth_enabled, const bool stencil_enabled);
+	unsigned create_rasterizer_state();
+	unsigned create_blend_state();
 private:
 	bool create_back_buffer_and_dst();
 	void setup_buffers();
@@ -78,6 +85,9 @@ private:
 	ComPtr<ID3D11InputLayout> _input_layout[MAX_INPUT_LAYOUTS];
 	ComPtr<ID3D11VertexShader> _vertex_shaders[MAX_VERTEX_SHADERS];
 	ComPtr<ID3D11PixelShader> _pixel_shaders[MAX_PIXEL_SHADERS];
+	ComPtr<ID3D11DepthStencilState> _dst_states[MAX_DST_STATES];
+	ComPtr<ID3D11RasterizerState> _rasterizer_states[MAX_DST_STATES];
+	ComPtr<ID3D11BlendState> _blend_states[MAX_BLEND_STATES];
 
 	unsigned _vertex_shader_il[MAX_VERTEX_SHADERS];
 
@@ -87,6 +97,9 @@ private:
 	unsigned _n_input_layouts;
 	unsigned _n_vertex_shaders;
 	unsigned _n_pixel_shaders;
+	unsigned _n_dst_states;
+	unsigned _n_rasterizer_states;
+	unsigned _n_blend_states;
 };
 
 } // namespace toy
