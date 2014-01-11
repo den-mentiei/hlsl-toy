@@ -64,6 +64,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 	Window::register_class(instance);
 
 	_main_window.open(instance, L"HLSL Toy", 1280, 720);
+	_main_window.set_keypress_callback(Application::on_keypress_callback, this);
 	if (!_render_device.init(_main_window)) {
 		return false;
 	}
@@ -71,7 +72,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 	if (!load_toy(toy_path)) {
 		return false;
 	}
-	init_render();
+	create_scene();
 
 	return true;
 }
@@ -86,7 +87,7 @@ bool Application::load_toy(const wchar_t* path) {
 	return true;
 }
 
-void Application::init_render() {
+void Application::create_scene() {
 	_triangles.start_index = 0;
 	_triangles.stride = sizeof(Vertex);
 	_triangles.count = 6;
@@ -119,6 +120,19 @@ bool Application::work() {
 	_main_window.update();
 
 	return !_main_window.is_closing();
+}
+
+void Application::on_keypress_callback(const unsigned key_code, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_keypress(key_code);
+}
+
+void Application::handle_keypress(const unsigned key_code) {
+	switch (key_code) {
+		case VK_F5:
+			// TODO:
+			break;
+	}	
 }
 
 } // namespace toy
