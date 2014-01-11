@@ -45,6 +45,8 @@ void Window::register_class(HINSTANCE instance) {
 Window::Window()
 	: _handle(0)
 	, _is_closing(false)
+	, _w(0)
+	, _h(0)
 {}
 
 Window::~Window() {
@@ -58,6 +60,9 @@ void Window::open(HINSTANCE instance, const wchar_t* title, const unsigned w, co
 	::GetClientRect(::GetDesktopWindow(), &desktop_rect);
 	unsigned x = (desktop_rect.right - w) / 2;
 	unsigned y = (desktop_rect.bottom - h) / 2;
+
+	_w = w;
+	_h = h;
 
 	RECT window_rect;
 	window_rect.left = x;
@@ -97,6 +102,14 @@ HWND Window::handle() const {
 
 void Window::handle_close() {
 	_is_closing = true;
+}
+
+unsigned Window::width() const {
+	return _w;
+}
+
+unsigned Window::height() const {
+	return _h;
 }
 
 } // namespace toy

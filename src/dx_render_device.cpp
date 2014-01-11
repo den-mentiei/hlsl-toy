@@ -56,10 +56,16 @@ bool DXRenderDevice::init(const Window& window) {
 	const unsigned n_feature_levels = sizeof(feature_levels) / sizeof(feature_levels[0]);
 
 	D3D_FEATURE_LEVEL current_feature_level;
-	hr = D3D11CreateDeviceAndSwapChain(adapter.get(), 
-		D3D_DRIVER_TYPE_UNKNOWN, 
-		0, 0, 
-		feature_levels, n_feature_levels, 
+	hr = D3D11CreateDeviceAndSwapChain(
+		adapter.get(),
+		D3D_DRIVER_TYPE_UNKNOWN,
+		0,
+#ifdef _DEBUG
+		D3D11_CREATE_DEVICE_DEBUG,
+#else
+		0,
+#endif
+		feature_levels, n_feature_levels,
 		D3D11_SDK_VERSION,
 		&swapchain_description, &_swap_chain, &_device,
 		&current_feature_level,
@@ -115,7 +121,8 @@ bool DXRenderDevice::create_back_buffer_and_dst() {
 		return false;
 	}
 
-	_immediate_device->OMSetRenderTargets(1, &_back_buffer_rtv, _depth_stencil_view.get());
+	//_back_buffer_srv
+	//hr = _device->CreateShaderResourceView(_back_buffer.get(),
 
 	return true;
 }
@@ -241,7 +248,7 @@ unsigned DXRenderDevice::create_input_layout(const VertexDescription& descriptio
 	HRESULT hr = _device->CreateInputLayout(
 		layout, description.n_elements,
 		vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(),
-		&_input_layout[_n_input_layouts]);
+		&_input_layouts[_n_input_layouts]);
 	if (FAILED(hr)) {
 		return MAX_INPUT_LAYOUTS + 1;
 	}
@@ -346,6 +353,61 @@ unsigned DXRenderDevice::create_blend_state(const bool blend_enabled) {
 
 	_n_blend_states++;
 	return _n_blend_states - 1;
+}
+
+void DXRenderDevice::render(const Batch& batch) {
+	UINT stride = batch.stride;
+	UINT offset = 0;
+
+	ID3D11Buffer* vertex_buffers[] = { _vertex_buffers[batch.vertices].get() };
+	_immediate_device->IASetVertexBuffers(0, 1, vertex_buffers, &stride, &offset);
+	_immediate_device->IASetIndexBuffer(_index_buffers[batch.indices].get(), DXGI_FORMAT_R32_UINT, 0);
+	_immediate_device->IASetInputLayout(_input_layouts[_vertex_shader_il[batch.vs]].get());
+	_immediate_device->IASetPrimitiveTopology(
+		batch.type == Batch::BT_TRIANGLE_LIST ? 
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	
+	ID3D11Buffer* constant_buffers[] = { _constant_buffers[batch.constants].get() };
+	_immediate_device->PSSetConstantBuffers(0, 1, constant_buffers);
+
+	//ID3D11ShaderResourceView* srvs[] = { _back_buffer_rtv.get() };
+	//_immediate_device->PSSetShaderResources(0, 1, );
+
+	_immediate_device->OMSetDepthStencilState(_dst_states[batch.dst_state].get(), 0);
+	_immediate_device->OMSetBlendState(_blend_states[batch.blend_state].get(), 0, 0xFFFFFFFF);
+	_immediate_device->RSSetState(_rasterizer_states[batch.rasterizer_state].get());
+
+	_immediate_device->VSSetShader(_vertex_shaders[batch.vs].get(), 0, 0);
+	_immediate_device->GSSetShader(0, 0, 0);
+	_immediate_device->PSSetShader(_pixel_shaders[batch.ps].get(), 0, 0);
+	_immediate_device->DrawIndexed(batch.count, batch.start_index, 0);
+}
+
+void DXRenderDevice::clear(const Float4 clear_color) {
+	_immediate_device->ClearRenderTargetView(_back_buffer_rtv.get(), &clear_color.x);
+	_immediate_device->ClearDepthStencilView(_depth_stencil_view.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 255);
+}
+
+void DXRenderDevice::set_viewport(const unsigned w, const unsigned h) {
+	D3D11_VIEWPORT viewport;
+
+	viewport.Width = static_cast<float>(w);
+	viewport.Height = static_cast<float>(h);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+
+	_immediate_device->RSSetViewports(1, &viewport);
+}
+
+void DXRenderDevice::start_frame() {
+	ID3D11RenderTargetView* rtvs[] = { _back_buffer_rtv.get() };
+	_immediate_device->OMSetRenderTargets(1, rtvs, _depth_stencil_view.get());
+}
+
+void DXRenderDevice::end_frame() {
+	_swap_chain->Present(0, 0);
 }
 
 } // namespace toy

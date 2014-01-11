@@ -1,6 +1,7 @@
 #pragma once
 
 #include "directx.h"
+#include "math/types.h"
 #include "com_ptr.h"
 
 namespace toy {
@@ -64,6 +65,32 @@ public:
 	unsigned create_dst_state(const bool depth_enabled);
 	unsigned create_rasterizer_state();
 	unsigned create_blend_state(const bool blend_enabled);
+
+	struct Batch {
+		enum Type {
+			BT_TRIANGLE_LIST,
+			BT_TRIANGLE_STRIP
+		};
+
+		size_t start_index;
+		size_t count;
+		size_t stride;
+		unsigned vertices;
+		unsigned indices;
+		unsigned constants;
+		unsigned dst_state;
+		unsigned rasterizer_state;
+		unsigned blend_state;
+		unsigned vs;
+		unsigned ps;
+		Type type;
+	};
+
+	void clear(const Float4 clear_color);
+	void set_viewport(const unsigned w, const unsigned h);
+	void render(const Batch& batch);
+	void start_frame();
+	void end_frame();
 private:
 	bool create_back_buffer_and_dst();
 	void setup_buffers();
@@ -77,12 +104,13 @@ private:
 	ComPtr<ID3D11Texture2D> _back_buffer;
 	ComPtr<ID3D11Texture2D> _depth_stencil;
 	ComPtr<ID3D11RenderTargetView> _back_buffer_rtv;
+	ComPtr<ID3D11ShaderResourceView> _back_buffer_srv;
 	ComPtr<ID3D11DepthStencilView> _depth_stencil_view;
 
 	ComPtr<ID3D11Buffer> _constant_buffers[MAX_CONSTANT_BUFFERS];
 	ComPtr<ID3D11Buffer> _vertex_buffers[MAX_VERTEX_BUFFERS];
 	ComPtr<ID3D11Buffer> _index_buffers[MAX_INDEX_BUFFERS];
-	ComPtr<ID3D11InputLayout> _input_layout[MAX_INPUT_LAYOUTS];
+	ComPtr<ID3D11InputLayout> _input_layouts[MAX_INPUT_LAYOUTS];
 	ComPtr<ID3D11VertexShader> _vertex_shaders[MAX_VERTEX_SHADERS];
 	ComPtr<ID3D11PixelShader> _pixel_shaders[MAX_PIXEL_SHADERS];
 	ComPtr<ID3D11DepthStencilState> _dst_states[MAX_DST_STATES];

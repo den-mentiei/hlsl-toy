@@ -61,7 +61,7 @@ static const char* ps_shader_code = ""
 "	float4 pos : SV_POSITION;\n"
 "	float2 uv : TEXCOORD;\n"
 "};\n\n"
-"float4 ps_main(PS_Input input) : SV_TARGET {\n"
+"float4 ps_main(PS_Input input) : SV_TARGET0 {\n"
 "	return float4(input.uv.x, input.uv.y, 0.0f, 1.0f);\n"
 "}";
 
@@ -77,22 +77,28 @@ bool Application::init(HINSTANCE instance) {
 		return false;
 	}
 
-	_toy_parameters_buffer = _render_device.create_constant_buffer(sizeof(ToyParameters));	
 	init_render();
 
 	return true;
 }
 
 void Application::init_render() {
-	_vertices = _render_device.create_static_vertex_buffer(vertices, sizeof(vertices));
-	_indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
-	
-	_vs_shader = _render_device.create_vertex_shader(vs_shader_code, std::strlen(vs_shader_code), vertex_description);
-	_ps_shader = _render_device.create_pixel_shader(ps_shader_code, std::strlen(ps_shader_code));
+	_triangles.start_index = 0;
+	_triangles.stride = sizeof(Vertex);
+	_triangles.count = 6;
+	_triangles.type = DXRenderDevice::Batch::BT_TRIANGLE_LIST;
 
-	_dst_state = _render_device.create_dst_state(false);
-	_rasterizer_state = _render_device.create_rasterizer_state();
-	_blend_state = _render_device.create_blend_state(false);
+	_triangles.constants = _render_device.create_constant_buffer(sizeof(ToyParameters));
+
+	_triangles.vertices = _render_device.create_static_vertex_buffer(vertices, sizeof(vertices));
+	_triangles.indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
+	
+	_triangles.vs = _render_device.create_vertex_shader(vs_shader_code, std::strlen(vs_shader_code), vertex_description);
+	_triangles.ps = _render_device.create_pixel_shader(ps_shader_code, std::strlen(ps_shader_code));
+
+	_triangles.dst_state = _render_device.create_dst_state(false);
+	_triangles.rasterizer_state = _render_device.create_rasterizer_state();
+	_triangles.blend_state = _render_device.create_blend_state(false);
 }
 
 void Application::shutdown() {
@@ -100,8 +106,15 @@ void Application::shutdown() {
 
 bool Application::work() {
 	_toy_parameters.time = static_cast<float>(std::time(0));
+	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
 
-	_render_device.update_constant_buffer(_toy_parameters_buffer, _toy_parameters);
+	_render_device.start_frame();
+	_render_device.set_viewport(_main_window.width(), _main_window.height());
+	const Float4 clear_color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	_render_device.clear(clear_color);
+	_render_device.render(_triangles);
+	_render_device.end_frame();
+
 	_main_window.update();
 
 	return !_main_window.is_closing();
