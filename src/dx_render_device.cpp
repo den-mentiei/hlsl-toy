@@ -157,7 +157,12 @@ unsigned DXRenderDevice::create_static_vertex_buffer(const void* const data, con
 	buffer_description.MiscFlags = 0;
 	buffer_description.StructureByteStride = 0;
 
-	HRESULT hr = _device->CreateBuffer(&buffer_description, 0, &_vertex_buffers[_n_vertex_buffers]);
+	D3D11_SUBRESOURCE_DATA resource;
+	resource.SysMemPitch = 0;
+	resource.SysMemSlicePitch = 0;
+	resource.pSysMem = data;
+
+	HRESULT hr = _device->CreateBuffer(&buffer_description, &resource, &_vertex_buffers[_n_vertex_buffers]);
 	if (FAILED(hr)) {
 		return MAX_VERTEX_BUFFERS + 1;
 	}
@@ -177,7 +182,12 @@ unsigned DXRenderDevice::create_static_index_buffer(const void* const data, cons
 	buffer_description.MiscFlags = 0;
 	buffer_description.StructureByteStride = 0;
 
-	HRESULT hr = _device->CreateBuffer(&buffer_description, 0, &_index_buffers[_n_index_buffers]);
+	D3D11_SUBRESOURCE_DATA resource;
+	resource.SysMemPitch = 0;
+	resource.SysMemSlicePitch = 0;
+	resource.pSysMem = data;
+
+	HRESULT hr = _device->CreateBuffer(&buffer_description, &resource, &_index_buffers[_n_index_buffers]);
 	if (FAILED(hr)) {
 		return MAX_INDEX_BUFFERS + 1;
 	}

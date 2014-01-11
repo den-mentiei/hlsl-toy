@@ -23,6 +23,9 @@ private:
 	};
 	ToyParameters _toy_parameters;
 	unsigned _toy_parameters_buffer;
+
+	unsigned _vertices;
+	unsigned _indices;
 };
 
 } // namespace toy
