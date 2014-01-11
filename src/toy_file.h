@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace toy {
 
 class ToyFile {
@@ -9,8 +11,7 @@ public:
 	const char* code() const;
 	size_t code_length() const;
 private:
-	char* _code;
-	size_t _code_length;
+	std::string _code;
 };
 
 } // namespace toy
