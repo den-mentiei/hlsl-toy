@@ -69,6 +69,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 		return false;
 	}
 
+	_toy_path = toy_path;
 	if (!load_toy(toy_path)) {
 		return false;
 	}
@@ -130,7 +131,9 @@ void Application::on_keypress_callback(const unsigned key_code, void* userdata) 
 void Application::handle_keypress(const unsigned key_code) {
 	switch (key_code) {
 		case VK_F5:
-			// TODO:
+			if (_toy.init(_toy_path)) {
+				_render_device.update_pixel_shader(_triangles.ps, _toy.code(), _toy.code_length());
+			}
 			break;
 	}	
 }
