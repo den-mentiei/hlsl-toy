@@ -1,5 +1,7 @@
 #include "dx_render_device.h"
+
 #include "window.h"
+
 #include <cassert>
 
 namespace toy {
@@ -11,22 +13,23 @@ DXRenderDevice::DXRenderDevice()
 	: _n_constant_buffers(0)
 	, _n_vertex_buffers(0)
 	, _n_index_buffers(0)
+	, _n_input_layouts(0)
+	, _n_vertex_shaders(0)
 {}
 
 bool DXRenderDevice::init(const Window& window) {
-	IDXGIFactory* dxgi_factory = nullptr;
+	ComPtr<IDXGIFactory> dxgi_factory;
 	HRESULT hr = ::CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&dxgi_factory));
 	if (FAILED(hr)) {
 		return false;
 	}
 
-	IDXGIAdapter* adapter = nullptr;
+	ComPtr<IDXGIAdapter> adapter;
 	// TODO: adapter index option
 	hr = dxgi_factory->EnumAdapters(0, &adapter);
 	if (FAILED(hr)) {
 		return false;
 	}
-	dxgi_factory->Release();
 
 	DXGI_SWAP_CHAIN_DESC swapchain_description;
 	swapchain_description.BufferDesc.Width = 0;
@@ -49,7 +52,7 @@ bool DXRenderDevice::init(const Window& window) {
 	const unsigned n_feature_levels = sizeof(feature_levels) / sizeof(feature_levels[0]);
 
 	D3D_FEATURE_LEVEL current_feature_level;
-	hr = D3D11CreateDeviceAndSwapChain(adapter, 
+	hr = D3D11CreateDeviceAndSwapChain(adapter.get(), 
 		D3D_DRIVER_TYPE_UNKNOWN, 
 		0, 0, 
 		feature_levels, n_feature_levels, 
@@ -60,7 +63,6 @@ bool DXRenderDevice::init(const Window& window) {
 	if (FAILED(hr)) {
 		return false;
 	}
-	adapter->Release();
 
 	return create_back_buffer_and_dst();
 }
@@ -199,8 +201,9 @@ unsigned DXRenderDevice::create_static_index_buffer(const void* const data, cons
 	return _n_index_buffers - 1;
 }
 
-unsigned DXRenderDevice::create_input_layout(const VertexDescription& description) {
+unsigned DXRenderDevice::create_input_layout(const VertexDescription& description, ComPtr<ID3D10Blob>& vs_blob) {
 	assert(_n_input_layouts < MAX_INPUT_LAYOUTS);
+	assert(description.n_elements > 0);
 
 	// Order-dependent on VertexDescription enum
 	static const char* semantics[] = {
@@ -217,6 +220,9 @@ unsigned DXRenderDevice::create_input_layout(const VertexDescription& descriptio
 	D3D11_INPUT_ELEMENT_DESC layout[VertexDescription::MAX_ELEMENTS];
 	unsigned size = 0;
 	for (unsigned i = 0; i < description.n_elements; ++i) {
+		assert(description.elements[i].semantic < VertexDescription::ES_COUNT);
+		assert(description.elements[i].semantic < VertexDescription::EF_COUNT);
+
 		layout[i].SemanticName = semantics[description.elements[i].semantic];
 		layout[i].SemanticIndex = 0;
 		layout[i].Format = formats[description.elements[i].format];
@@ -228,10 +234,36 @@ unsigned DXRenderDevice::create_input_layout(const VertexDescription& descriptio
 		size += VertexDescription::element_size[description.elements[i].format];
 	}
 
-	// TODO: create input layout
+	HRESULT hr = _device->CreateInputLayout(
+		layout, description.n_elements,
+		vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(),
+		&_input_layout[_n_input_layouts]);
+	if (FAILED(hr)) {
+		return MAX_INPUT_LAYOUTS + 1;
+	}
 
 	_n_input_layouts++;
 	return _n_input_layouts - 1;
+}
+
+unsigned DXRenderDevice::create_vertex_shader(const char* const code, const size_t length, const VertexDescription& vertex_description) {
+	assert(code != nullptr);
+
+	ComPtr<ID3DBlob> vs_blob;
+	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "vs_main", "vs_4_0", 0, 0, 0, &vs_blob, 0, 0);
+	if (FAILED(hr)) {
+		return MAX_VERTEX_SHADERS + 1;
+	}
+
+	hr = _device->CreateVertexShader(vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(), 0, &_vertex_shaders[_n_vertex_shaders]);
+	if (FAILED(hr)) {
+		return MAX_VERTEX_SHADERS + 1;
+	}
+
+	unsigned il = create_input_layout(vertex_description, vs_blob);
+
+	_n_vertex_shaders++;
+	return _n_vertex_shaders - 1;
 }
 
 } // namespace toy

@@ -1,9 +1,12 @@
 #include "application.h"
+
 #include "directx.h"
 #include "math/float2.h"
 #include "math/float3.h"
 #include "math/float4.h"
+
 #include <ctime>
+#include <cstring>
 
 namespace toy {
 
@@ -36,6 +39,23 @@ static const VertexDescription vertex_description = {
 	2
 };
 
+// Where is my raw string literals, Microsoft?
+static const char* vs_shader_code = ""
+"struct VS_Input {\n"
+"	float3 pos : POSITION;\n"
+"	float2 uv : TEXCOORD;\n"
+"};\n\n"
+"struct PS_Input {\n"
+"	float4 pos : SV_POSITION;\n"
+"	float2 uv : TEXCOORD;\n"
+"};\n\n"
+"PS_Input vs_main(VS_Input input) {\n"
+"	PS_Input o;\n"
+"	o.pos = float4(input.pos.x, input.pos.y, 0.0f, 1.0f);\n"
+"	o.uv = input.uv;\n"
+"	return o;\n"
+"}";
+
 } // anonymous namespace
 
 bool Application::init(HINSTANCE instance) {
@@ -51,8 +71,7 @@ bool Application::init(HINSTANCE instance) {
 	_toy_parameters_buffer = _render_device.create_constant_buffer(sizeof(ToyParameters));
 	_vertices = _render_device.create_static_vertex_buffer(vertices, sizeof(vertices));
 	_indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
-	_input_layout = _render_device.create_input_layout(vertex_description);
-
+	_vs_shader = _render_device.create_vertex_shader(vs_shader_code, std::strlen(vs_shader_code), vertex_description);
 	return true;
 }
 
