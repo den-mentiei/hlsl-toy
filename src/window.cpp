@@ -108,7 +108,7 @@ void Window::handle_close() {
 	_is_closing = true;
 }
 
-void Window::handle_key_down(unsigned key_code) {
+void Window::handle_key_down(const unsigned key_code) {
 	if (_keypress_cb) {
 		_keypress_cb(key_code, _keypress_cb_userdata);
 	}

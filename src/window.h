@@ -20,14 +20,14 @@ public:
 	unsigned width() const;
 	unsigned height() const;
 
-	typedef void (*KeypressCallback)(unsigned key_code, void* userdata);
+	typedef void (*KeypressCallback)(const unsigned key_code, void* userdata);
 	void set_keypress_callback(KeypressCallback callback, void* userdata);
 private:
 	void close();
 
 	static LRESULT WINAPI windows_proc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
 	void handle_close();
-	void handle_key_down(unsigned key_code);
+	void handle_key_down(const unsigned key_code);
 
 	KeypressCallback _keypress_cb;
 	void* _keypress_cb_userdata;
