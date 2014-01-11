@@ -24,6 +24,7 @@ private:
 
 	static LRESULT WINAPI windows_proc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
 	void handle_close();
+	void handle_key_down(unsigned key_code);
 
 	HWND _handle;
 	unsigned _w, _h;

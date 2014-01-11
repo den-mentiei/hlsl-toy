@@ -18,6 +18,10 @@ LRESULT WINAPI Window::windows_proc(HWND handle, UINT message, WPARAM wparam, LP
 			window->handle_close();
 			break;
 
+		case WM_KEYDOWN:
+			window->handle_key_down(static_cast<unsigned>(wparam));
+			break;
+
 		default:
 			return DefWindowProcW(handle, message, wparam, lparam);
 	}
@@ -102,6 +106,10 @@ HWND Window::handle() const {
 
 void Window::handle_close() {
 	_is_closing = true;
+}
+
+void Window::handle_key_down(unsigned key_code) {
+	// TODO:
 }
 
 unsigned Window::width() const {
