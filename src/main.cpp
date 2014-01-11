@@ -6,7 +6,7 @@ using namespace toy;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	Application app;
 
-	app.init();
+	app.init(hInstance);
 	while (app.work()) {};
 	app.shutdown();
 
