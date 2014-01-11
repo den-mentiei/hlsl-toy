@@ -77,13 +77,22 @@ bool Application::init(HINSTANCE instance) {
 		return false;
 	}
 
-	_toy_parameters_buffer = _render_device.create_constant_buffer(sizeof(ToyParameters));
+	_toy_parameters_buffer = _render_device.create_constant_buffer(sizeof(ToyParameters));	
+	init_render();
+
+	return true;
+}
+
+void Application::init_render() {
 	_vertices = _render_device.create_static_vertex_buffer(vertices, sizeof(vertices));
 	_indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
+	
 	_vs_shader = _render_device.create_vertex_shader(vs_shader_code, std::strlen(vs_shader_code), vertex_description);
 	_ps_shader = _render_device.create_pixel_shader(ps_shader_code, std::strlen(ps_shader_code));
 
-	return true;
+	_dst_state = _render_device.create_dst_state(false);
+	_rasterizer_state = _render_device.create_rasterizer_state();
+	_blend_state = _render_device.create_blend_state(false);
 }
 
 void Application::shutdown() {

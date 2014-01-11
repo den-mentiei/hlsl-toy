@@ -13,6 +13,8 @@ public:
 	void shutdown();
 	bool work();
 private:
+	void init_render();
+
 	HINSTANCE _instance;
 	DXRenderDevice _render_device;
 	Window _main_window;
@@ -28,6 +30,9 @@ private:
 	unsigned _indices;
 	unsigned _vs_shader;
 	unsigned _ps_shader;
+	unsigned _dst_state;
+	unsigned _rasterizer_state;
+	unsigned _blend_state;
 };
 
 } // namespace toy

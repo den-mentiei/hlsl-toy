@@ -16,6 +16,9 @@ DXRenderDevice::DXRenderDevice()
 	, _n_input_layouts(0)
 	, _n_vertex_shaders(0)
 	, _n_pixel_shaders(0)
+	, _n_dst_states(0)
+	, _n_rasterizer_states(0)
+	, _n_blend_states(0)
 {}
 
 bool DXRenderDevice::init(const Window& window) {
@@ -285,6 +288,64 @@ unsigned DXRenderDevice::create_pixel_shader(const char* const code, const size_
 
 	_n_pixel_shaders++;
 	return _n_pixel_shaders - 1;
+}
+
+unsigned DXRenderDevice::create_dst_state(const bool depth_enabled) {
+	assert(_n_dst_states < MAX_DST_STATES);
+
+	CD3D11_DEPTH_STENCIL_DESC dst_description(D3D11_DEFAULT);
+	dst_description.DepthEnable = depth_enabled;
+
+	HRESULT hr = _device->CreateDepthStencilState(&dst_description, &_dst_states[_n_dst_states]);
+	if (FAILED(hr)) {
+		return MAX_DST_STATES + 1;
+	}
+
+	_n_dst_states++;
+	return _n_dst_states - 1;
+}
+
+unsigned DXRenderDevice::create_rasterizer_state() {
+	assert(_n_rasterizer_states < MAX_RASTERIZER_STATES);
+
+	CD3D11_RASTERIZER_DESC rs_description(D3D11_DEFAULT);
+	// rs_description.CullMode = D3D11_CULL_NONE;
+	rs_description.DepthClipEnable = false;
+	
+	HRESULT hr = _device->CreateRasterizerState(&rs_description, &_rasterizer_states[_n_rasterizer_states]);
+	if (FAILED(hr)) {
+		return MAX_RASTERIZER_STATES + 1;
+	}
+
+	_n_rasterizer_states++;
+	return _n_rasterizer_states - 1;
+}
+
+unsigned DXRenderDevice::create_blend_state(const bool blend_enabled) {
+	assert(_n_blend_states < MAX_BLEND_STATES);
+
+	D3D11_RENDER_TARGET_BLEND_DESC rt_bs_description;
+	rt_bs_description.BlendEnable = blend_enabled;
+	rt_bs_description.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	rt_bs_description.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	rt_bs_description.BlendOp = D3D11_BLEND_OP_ADD;
+	rt_bs_description.SrcBlendAlpha = D3D11_BLEND_ONE;
+	rt_bs_description.DestBlendAlpha = D3D11_BLEND_ZERO;
+	rt_bs_description.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	rt_bs_description.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	D3D11_BLEND_DESC bs_description;
+	bs_description.AlphaToCoverageEnable = false;
+	bs_description.IndependentBlendEnable = false;
+	bs_description.RenderTarget[0] = rt_bs_description;
+
+	HRESULT hr = _device->CreateBlendState(&bs_description, &_blend_states[_n_blend_states]);
+	if (FAILED(hr)) {
+		return MAX_BLEND_STATES + 1;
+	}
+
+	_n_blend_states++;
+	return _n_blend_states - 1;
 }
 
 } // namespace toy
