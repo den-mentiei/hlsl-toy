@@ -62,6 +62,8 @@ public:
 	unsigned create_vertex_shader(const char* const code, const size_t length, const VertexDescription& vertex_description);
 	unsigned create_pixel_shader(const char* const code, const size_t length);
 
+	void update_pixel_shader(unsigned shader, const char* const code, const size_t length);
+
 	unsigned create_dst_state(const bool depth_enabled);
 	unsigned create_rasterizer_state();
 	unsigned create_blend_state(const bool blend_enabled);
@@ -97,6 +99,8 @@ private:
 
 	unsigned create_input_layout(const VertexDescription& description, ComPtr<ID3D10Blob>& vs_blob);
 
+	bool compile_pixel_shader(const char* const code, const size_t length, ComPtr<ID3D11PixelShader>& destination);
+
 	ComPtr<ID3D11Device> _device;
 	ComPtr<ID3D11DeviceContext> _immediate_device;
 	ComPtr<IDXGISwapChain> _swap_chain;
@@ -104,7 +108,6 @@ private:
 	ComPtr<ID3D11Texture2D> _back_buffer;
 	ComPtr<ID3D11Texture2D> _depth_stencil;
 	ComPtr<ID3D11RenderTargetView> _back_buffer_rtv;
-	ComPtr<ID3D11ShaderResourceView> _back_buffer_srv;
 	ComPtr<ID3D11DepthStencilView> _depth_stencil_view;
 
 	ComPtr<ID3D11Buffer> _constant_buffers[MAX_CONSTANT_BUFFERS];

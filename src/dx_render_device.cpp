@@ -121,9 +121,6 @@ bool DXRenderDevice::create_back_buffer_and_dst() {
 		return false;
 	}
 
-	//_back_buffer_srv
-	//hr = _device->CreateShaderResourceView(_back_buffer.get(),
-
 	return true;
 }
 
@@ -282,19 +279,37 @@ unsigned DXRenderDevice::create_pixel_shader(const char* const code, const size_
 	assert(code != nullptr);
 	assert(length > 0);
 
-	ComPtr<ID3DBlob> ps_blob;
-	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "ps_main", "ps_4_0", 0, 0, 0, &ps_blob, 0, 0);
-	if (FAILED(hr)) {
-		return MAX_PIXEL_SHADERS + 1;
-	}
-
-	hr = _device->CreatePixelShader(ps_blob->GetBufferPointer(), ps_blob->GetBufferSize(), 0, &_pixel_shaders[_n_pixel_shaders]);
-	if (FAILED(hr)) {
+	if (!compile_pixel_shader(code, length, _pixel_shaders[_n_pixel_shaders])) {
 		return MAX_PIXEL_SHADERS + 1;
 	}
 
 	_n_pixel_shaders++;
 	return _n_pixel_shaders - 1;
+}
+
+void DXRenderDevice::update_pixel_shader(unsigned shader, const char* const code, const size_t length) {
+	assert(shader < _n_pixel_shaders);
+	assert(code != nullptr);
+	assert(length > 0);
+
+	// TODO:
+}
+
+bool DXRenderDevice::compile_pixel_shader(const char* const code, const size_t length, ComPtr<ID3D11PixelShader>& destination) {
+	ComPtr<ID3DBlob> ps_blob;
+	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "ps_main", "ps_4_0", 0, 0, 0, &ps_blob, 0, 0);
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	ID3D11PixelShader* ps = nullptr;
+	hr = _device->CreatePixelShader(ps_blob->GetBufferPointer(), ps_blob->GetBufferSize(), 0, &ps);
+	if (FAILED(hr)) {
+		return false;
+	}
+	destination.set(ps);
+
+	return true;
 }
 
 unsigned DXRenderDevice::create_dst_state(const bool depth_enabled) {
@@ -369,9 +384,6 @@ void DXRenderDevice::render(const Batch& batch) {
 	
 	ID3D11Buffer* constant_buffers[] = { _constant_buffers[batch.constants].get() };
 	_immediate_device->PSSetConstantBuffers(0, 1, constant_buffers);
-
-	//ID3D11ShaderResourceView* srvs[] = { _back_buffer_rtv.get() };
-	//_immediate_device->PSSetShaderResources(0, 1, );
 
 	_immediate_device->OMSetDepthStencilState(_dst_states[batch.dst_state].get(), 0);
 	_immediate_device->OMSetBlendState(_blend_states[batch.blend_state].get(), 0, 0xFFFFFFFF);

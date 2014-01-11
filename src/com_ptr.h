@@ -16,6 +16,7 @@ public:
 	T** operator&();
 
 	T* get() const;
+	void set(T* p);
 private:
 	T* _p;
 };
@@ -68,6 +69,14 @@ T** ComPtr<T>::operator&() {
 template <typename T>
 T* ComPtr<T>::get() const {
 	return _p;
+}
+
+template <typename T>
+void ComPtr<T>::set(T* p) {
+	if (_p) {
+		_p->Release();
+	}
+	_p = p;
 }
 
 } // namespace toy
