@@ -97,6 +97,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\dx_render_device.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\toy_file.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -108,8 +109,21 @@
     <ClInclude Include="src\math\float2.h" />
     <ClInclude Include="src\math\float3.h" />
     <ClInclude Include="src\math\float4.h" />
+    <ClInclude Include="src\toy_file.h" />
     <ClInclude Include="src\window.h" />
     <ClInclude Include="src\windows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="toys\default.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\toys\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying a toy</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </TreatOutputAsContent>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

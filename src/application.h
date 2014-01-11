@@ -4,15 +4,16 @@
 
 #include "window.h"
 #include "dx_render_device.h"
+#include "toy_file.h"
 
 namespace toy {
 
 class Application {
 public:
-	bool init(HINSTANCE instance);
-	void shutdown();
+	bool init(HINSTANCE instance, const wchar_t* toy_path);
 	bool work();
 private:
+	bool load_toy(const wchar_t* path);
 	void init_render();
 
 	HINSTANCE _instance;
@@ -26,6 +27,7 @@ private:
 	ToyParameters _toy_parameters;
 
 	DXRenderDevice::Batch _triangles;
+	ToyFile _toy;
 };
 
 } // namespace toy
