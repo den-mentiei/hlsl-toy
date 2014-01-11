@@ -16,6 +16,13 @@ private:
 	HINSTANCE _instance;
 	DXRenderDevice _render_device;
 	Window _main_window;
+
+	__declspec(align(16))
+	struct ToyParameters {
+		float time;
+	};
+	ToyParameters _toy_parameters;
+	unsigned _toy_parameters_buffer;
 };
 
 } // namespace toy
