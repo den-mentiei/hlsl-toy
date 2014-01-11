@@ -108,7 +108,9 @@ void Application::create_scene() {
 }
 
 bool Application::work() {
-	_toy_parameters.time = static_cast<float>(std::time(0));
+	_timer.tick();
+
+	_toy_parameters.time = static_cast<float>(_timer.elapsed());
 	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
 
 	_render_device.start_frame();

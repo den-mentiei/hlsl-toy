@@ -5,6 +5,7 @@
 #include "window.h"
 #include "dx_render_device.h"
 #include "toy_file.h"
+#include "timer.h"
 
 namespace toy {
 
@@ -19,6 +20,8 @@ private:
 
 	bool load_toy(const wchar_t* path);
 	void create_scene();
+
+	Timer _timer;
 
 	HINSTANCE _instance;
 	DXRenderDevice _render_device;
