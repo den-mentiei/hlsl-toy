@@ -405,8 +405,8 @@ void DXRenderDevice::clear(const Float4 clear_color) {
 void DXRenderDevice::set_viewport(const unsigned w, const unsigned h) {
 	D3D11_VIEWPORT viewport;
 
-	viewport.Width = static_cast<float>(w);
-	viewport.Height = static_cast<float>(h);
+	viewport.Width = float(w);
+	viewport.Height = float(h);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;

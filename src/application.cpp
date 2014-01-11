@@ -5,6 +5,7 @@
 #include "math/float3.h"
 #include "math/float4.h"
 
+#include <cmath>
 #include <ctime>
 #include <cstring>
 
@@ -65,6 +66,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 
 	_main_window.open(instance, L"HLSL Toy", 1280, 720);
 	_main_window.set_keypress_callback(Application::on_keypress_callback, this);
+	_main_window.set_mouse_move_callback(Application::on_mouse_move_callback, this);
 	if (!_render_device.init(_main_window)) {
 		return false;
 	}
@@ -74,6 +76,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 		return false;
 	}
 	create_scene();
+	_toy_parameters.mouse = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	return true;
 }
@@ -108,19 +111,32 @@ void Application::create_scene() {
 }
 
 bool Application::work() {
-	_toy_parameters.time = static_cast<float>(std::time(0));
-	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
+	update();
+	render();
 
+	return !_main_window.is_closing();
+}
+
+void Application::update() {
+	_timer.tick();
+	_main_window.update();
+	update_toy_parameters();
+}
+
+void Application::render() {
 	_render_device.start_frame();
 	_render_device.set_viewport(_main_window.width(), _main_window.height());
 	const Float4 clear_color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	_render_device.clear(clear_color);
 	_render_device.render(_triangles);
 	_render_device.end_frame();
+}
 
-	_main_window.update();
+void Application::update_toy_parameters() {
+	_toy_parameters.resolution = float2(float(_main_window.width()), float(_main_window.height()));
+	_toy_parameters.time = static_cast<float>(_timer.elapsed());
 
-	return !_main_window.is_closing();
+	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
 }
 
 void Application::on_keypress_callback(const unsigned key_code, void* userdata) {
@@ -136,6 +152,43 @@ void Application::handle_keypress(const unsigned key_code) {
 			}
 			break;
 	}	
+}
+
+void Application::on_mouse_move_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_mouse_move(x, y, button);
+}
+
+void Application::handle_mouse_move(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (button == Mouse::B_LEFT) {
+		_toy_parameters.mouse.x = float(x);
+		_toy_parameters.mouse.y = float(y);
+	}
+}
+
+void Application::on_mouse_down_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_mouse_down(x, y, button);
+}
+
+
+void Application::handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (button == Mouse::B_LEFT) {
+		_toy_parameters.mouse.z = float(x);
+		_toy_parameters.mouse.w = float(y);
+	}
+}
+
+void Application::on_mouse_up_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_mouse_up(x, y, button);
+}
+
+void Application::handle_mouse_up(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (button == Mouse::B_LEFT) {
+		_toy_parameters.mouse.z = -std::abs(_toy_parameters.mouse.z);
+		_toy_parameters.mouse.w = -std::abs(_toy_parameters.mouse.w);
+	}
 }
 
 } // namespace toy
