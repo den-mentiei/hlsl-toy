@@ -20,5 +20,8 @@
     <ClInclude Include="src\application.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\directx.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
