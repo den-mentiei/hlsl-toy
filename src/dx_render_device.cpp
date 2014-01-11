@@ -390,4 +390,8 @@ void DXRenderDevice::set_viewport(const unsigned w, const unsigned h) {
 	_immediate_device->RSSetViewports(0, &viewport);
 }
 
+void DXRenderDevice::present() {
+	_swap_chain->Present(0, 0);
+}
+
 } // namespace toy

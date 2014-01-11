@@ -111,6 +111,7 @@ bool Application::work() {
 	const Float4 clear_color = float4(1.0f, 0.0f, 0.0f, 1.0f);
 	_render_device.clear(clear_color);
 	//_render_device.render(_triangles);
+	_render_device.present();
 
 	_main_window.update();
 

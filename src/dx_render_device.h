@@ -89,6 +89,7 @@ public:
 	void clear(const Float4 clear_color);
 	void set_viewport(const unsigned w, const unsigned h);
 	void render(const Batch& batch);
+	void present();
 private:
 	bool create_back_buffer_and_dst();
 	void setup_buffers();
