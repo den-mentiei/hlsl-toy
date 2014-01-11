@@ -24,15 +24,8 @@ private:
 		float time;
 	};
 	ToyParameters _toy_parameters;
-	unsigned _toy_parameters_buffer;
 
-	unsigned _vertices;
-	unsigned _indices;
-	unsigned _vs_shader;
-	unsigned _ps_shader;
-	unsigned _dst_state;
-	unsigned _rasterizer_state;
-	unsigned _blend_state;
+	DXRenderDevice::Batch _triangles;
 };
 
 } // namespace toy
