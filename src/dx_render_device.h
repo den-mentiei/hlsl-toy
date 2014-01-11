@@ -1,6 +1,7 @@
 #pragma once
 
 #include "directx.h"
+#include "math/types.h"
 #include "com_ptr.h"
 
 namespace toy {
@@ -85,7 +86,7 @@ public:
 		Type type;
 	};
 
-	// Immediate for now
+	void clear(const Float4 clear_color);
 	void render(const Batch& batch);
 private:
 	bool create_back_buffer_and_dst();

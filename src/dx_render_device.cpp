@@ -372,4 +372,9 @@ void DXRenderDevice::render(const Batch& batch) {
 	_immediate_device->DrawIndexed(batch.count, batch.start_index, 0);
 }
 
+void DXRenderDevice::clear(const Float4 clear_color) {
+	_immediate_device->ClearRenderTargetView(_back_buffer_rtv.get(), &clear_color.x);
+	_immediate_device->ClearDepthStencilView(_depth_stencil_view.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 255);
+}
+
 } // namespace toy

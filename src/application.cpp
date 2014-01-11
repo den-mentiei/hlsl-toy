@@ -107,6 +107,8 @@ bool Application::work() {
 	_toy_parameters.time = static_cast<float>(std::time(0));
 	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
 
+	const Float4 clear_color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	_render_device.clear(clear_color);
 	_render_device.render(_triangles);
 
 	_main_window.update();
