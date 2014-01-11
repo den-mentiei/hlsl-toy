@@ -47,7 +47,6 @@ public:
 	DXRenderDevice();
 
 	bool init(const Window& window);
-	void shutdown();
 
 	unsigned create_constant_buffer(const size_t size);
 	void update_constant_buffer(const unsigned id, const void* const data, const size_t size);

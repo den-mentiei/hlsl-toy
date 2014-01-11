@@ -56,18 +56,9 @@ static const char* vs_shader_code = ""
 "	return o;\n"
 "}";
 
-static const char* ps_shader_code = ""
-"struct PS_Input {\n"
-"	float4 pos : SV_POSITION;\n"
-"	float2 uv : TEXCOORD;\n"
-"};\n\n"
-"float4 ps_main(PS_Input input) : SV_TARGET0 {\n"
-"	return float4(input.uv.x, input.uv.y, 0.0f, 1.0f);\n"
-"}";
-
 } // anonymous namespace
 
-bool Application::init(HINSTANCE instance) {
+bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 	_instance = instance;
 
 	Window::register_class(instance);
@@ -77,8 +68,21 @@ bool Application::init(HINSTANCE instance) {
 		return false;
 	}
 
+	if (!load_toy(toy_path)) {
+		return false;
+	}
 	init_render();
 
+	return true;
+}
+
+bool Application::load_toy(const wchar_t* path) {
+	if (path == nullptr) {
+		return false;
+	}
+	if (!_toy.init(path)) {
+		return false;
+	}
 	return true;
 }
 
@@ -94,14 +98,11 @@ void Application::init_render() {
 	_triangles.indices = _render_device.create_static_index_buffer(indices, sizeof(indices));
 	
 	_triangles.vs = _render_device.create_vertex_shader(vs_shader_code, std::strlen(vs_shader_code), vertex_description);
-	_triangles.ps = _render_device.create_pixel_shader(ps_shader_code, std::strlen(ps_shader_code));
+	_triangles.ps = _render_device.create_pixel_shader(_toy.code(), _toy.code_length());
 
 	_triangles.dst_state = _render_device.create_dst_state(false);
 	_triangles.rasterizer_state = _render_device.create_rasterizer_state();
 	_triangles.blend_state = _render_device.create_blend_state(false);
-}
-
-void Application::shutdown() {
 }
 
 bool Application::work() {

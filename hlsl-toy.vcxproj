@@ -97,6 +97,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\dx_render_device.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\toy_file.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
