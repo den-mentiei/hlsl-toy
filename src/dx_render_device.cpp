@@ -248,6 +248,7 @@ unsigned DXRenderDevice::create_input_layout(const VertexDescription& descriptio
 
 unsigned DXRenderDevice::create_vertex_shader(const char* const code, const size_t length, const VertexDescription& vertex_description) {
 	assert(code != nullptr);
+	assert(length > 0);
 
 	ComPtr<ID3DBlob> vs_blob;
 	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "vs_main", "vs_4_0", 0, 0, 0, &vs_blob, 0, 0);
@@ -264,6 +265,25 @@ unsigned DXRenderDevice::create_vertex_shader(const char* const code, const size
 
 	_n_vertex_shaders++;
 	return _n_vertex_shaders - 1;
+}
+
+unsigned DXRenderDevice::create_pixel_shader(const char* const code, const size_t length) {
+	assert(code != nullptr);
+	assert(length > 0);
+
+	ComPtr<ID3DBlob> ps_blob;
+	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "ps_main", "ps_4_0", 0, 0, 0, &ps_blob, 0, 0);
+	if (FAILED(hr)) {
+		return MAX_PIXEL_SHADERS + 1;
+	}
+
+	hr = _device->CreatePixelShader(ps_blob->GetBufferPointer(), ps_blob->GetBufferSize(), 0, &_pixel_shaders[_n_pixel_shaders]);
+	if (FAILED(hr)) {
+		return MAX_PIXEL_SHADERS + 1;
+	}
+
+	_n_pixel_shaders++;
+	return _n_pixel_shaders - 1;
 }
 
 } // namespace toy

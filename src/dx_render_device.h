@@ -37,6 +37,7 @@ class DXRenderDevice {
 		MAX_INDEX_BUFFERS = 4,
 		MAX_INPUT_LAYOUTS = 4,
 		MAX_VERTEX_SHADERS = 4,
+		MAX_PIXEL_SHADERS = 4,
 	};
 public:
 	DXRenderDevice();
@@ -55,6 +56,7 @@ public:
 	unsigned create_static_index_buffer(const void* const data, const size_t size);
 
 	unsigned create_vertex_shader(const char* const code, const size_t length, const VertexDescription& vertex_description);
+	unsigned create_pixel_shader(const char* const code, const size_t length);
 private:
 	bool create_back_buffer_and_dst();
 	void setup_buffers();
@@ -75,6 +77,8 @@ private:
 	ComPtr<ID3D11Buffer> _index_buffers[MAX_INDEX_BUFFERS];
 	ComPtr<ID3D11InputLayout> _input_layout[MAX_INPUT_LAYOUTS];
 	ComPtr<ID3D11VertexShader> _vertex_shaders[MAX_VERTEX_SHADERS];
+	ComPtr<ID3D11PixelShader> _pixel_shaders[MAX_PIXEL_SHADERS];
+
 	unsigned _vertex_shader_il[MAX_VERTEX_SHADERS];
 
 	unsigned _n_constant_buffers;
@@ -82,6 +86,7 @@ private:
 	unsigned _n_index_buffers;
 	unsigned _n_input_layouts;
 	unsigned _n_vertex_shaders;
+	unsigned _n_pixel_shaders;
 };
 
 } // namespace toy
