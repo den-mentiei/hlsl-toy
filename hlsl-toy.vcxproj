@@ -104,6 +104,10 @@
     <ClInclude Include="src\com_ptr.h" />
     <ClInclude Include="src\directx.h" />
     <ClInclude Include="src\dx_render_device.h" />
+    <ClInclude Include="src\math\types.h" />
+    <ClInclude Include="src\math\float2.h" />
+    <ClInclude Include="src\math\float3.h" />
+    <ClInclude Include="src\math\float4.h" />
     <ClInclude Include="src\window.h" />
     <ClInclude Include="src\windows.h" />
   </ItemGroup>
