@@ -107,11 +107,12 @@ bool Application::work() {
 	_toy_parameters.time = static_cast<float>(std::time(0));
 	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
 
+	_render_device.start_frame();
 	_render_device.set_viewport(_main_window.width(), _main_window.height());
-	const Float4 clear_color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+	const Float4 clear_color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	_render_device.clear(clear_color);
-	//_render_device.render(_triangles);
-	_render_device.present();
+	_render_device.render(_triangles);
+	_render_device.end_frame();
 
 	_main_window.update();
 

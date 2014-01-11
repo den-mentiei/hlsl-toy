@@ -115,8 +115,6 @@ bool DXRenderDevice::create_back_buffer_and_dst() {
 		return false;
 	}
 
-	_immediate_device->OMSetRenderTargets(1, &_back_buffer_rtv, _depth_stencil_view.get());
-
 	return true;
 }
 
@@ -351,16 +349,17 @@ unsigned DXRenderDevice::create_blend_state(const bool blend_enabled) {
 void DXRenderDevice::render(const Batch& batch) {
 	UINT stride = batch.stride;
 	UINT offset = 0;
-	_immediate_device->IASetVertexBuffers(0, 1, &_vertex_buffers[batch.vertices], &stride, &offset);
+
+	ID3D11Buffer* vertex_buffers[] = { _vertex_buffers[batch.vertices].get() };
+	_immediate_device->IASetVertexBuffers(0, 1, vertex_buffers, &stride, &offset);
 	_immediate_device->IASetIndexBuffer(_index_buffers[batch.indices].get(), DXGI_FORMAT_R32_UINT, 0);
 	_immediate_device->IASetInputLayout(_input_layouts[_vertex_shader_il[batch.vs]].get());
 	_immediate_device->IASetPrimitiveTopology(
 		batch.type == Batch::BT_TRIANGLE_LIST ? 
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-	_immediate_device->OMSetRenderTargets(0, &_back_buffer_rtv, _depth_stencil_view.get());
 	
-	_immediate_device->PSSetConstantBuffers(0, 1, &_constant_buffers[batch.constants]);
+	ID3D11Buffer* constant_buffers[] = { _constant_buffers[batch.constants].get() };
+	_immediate_device->PSSetConstantBuffers(0, 1, constant_buffers);
 
 	_immediate_device->OMSetDepthStencilState(_dst_states[batch.dst_state].get(), 0);
 	_immediate_device->OMSetBlendState(_blend_states[batch.blend_state].get(), 0, 0xFFFFFFFF);
@@ -390,7 +389,12 @@ void DXRenderDevice::set_viewport(const unsigned w, const unsigned h) {
 	_immediate_device->RSSetViewports(0, &viewport);
 }
 
-void DXRenderDevice::present() {
+void DXRenderDevice::start_frame() {
+	ID3D11RenderTargetView* rtvs[] = { _back_buffer_rtv.get() };
+	_immediate_device->OMSetRenderTargets(0, rtvs, _depth_stencil_view.get());
+}
+
+void DXRenderDevice::end_frame() {
 	_swap_chain->Present(0, 0);
 }
 
