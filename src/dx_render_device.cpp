@@ -308,7 +308,14 @@ unsigned DXRenderDevice::create_dst_state(const bool depth_enabled) {
 unsigned DXRenderDevice::create_rasterizer_state() {
 	assert(_n_rasterizer_states < MAX_RASTERIZER_STATES);
 
-	// TODO:
+	CD3D11_RASTERIZER_DESC rs_description(D3D11_DEFAULT);
+	// rs_description.CullMode = D3D11_CULL_NONE;
+	rs_description.DepthClipEnable = false;
+	
+	HRESULT hr = _device->CreateRasterizerState(&rs_description, &_rasterizer_states[_n_rasterizer_states]);
+	if (FAILED(hr)) {
+		return MAX_RASTERIZER_STATES + 1;
+	}
 
 	_n_rasterizer_states++;
 	return _n_rasterizer_states - 1;
