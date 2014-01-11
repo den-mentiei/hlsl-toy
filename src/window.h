@@ -6,6 +6,8 @@ namespace toy {
 
 class Window {
 public:
+	static void register_class(HINSTANCE instance);
+
 	Window();
 	~Window();
 
@@ -18,13 +20,17 @@ public:
 	unsigned width() const;
 	unsigned height() const;
 
-	static void register_class(HINSTANCE instance);
+	typedef void (*KeypressCallback)(unsigned key_code, void* userdata);
+	void set_keypress_callback(KeypressCallback callback, void* userdata);
 private:
 	void close();
 
 	static LRESULT WINAPI windows_proc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
 	void handle_close();
 	void handle_key_down(unsigned key_code);
+
+	KeypressCallback _keypress_cb;
+	void* _keypress_cb_userdata;
 
 	HWND _handle;
 	unsigned _w, _h;

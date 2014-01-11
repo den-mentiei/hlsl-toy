@@ -109,7 +109,9 @@ void Window::handle_close() {
 }
 
 void Window::handle_key_down(unsigned key_code) {
-	// TODO:
+	if (_keypress_cb) {
+		_keypress_cb(key_code, _keypress_cb_userdata);
+	}
 }
 
 unsigned Window::width() const {
@@ -118,6 +120,11 @@ unsigned Window::width() const {
 
 unsigned Window::height() const {
 	return _h;
+}
+
+void Window::set_keypress_callback(KeypressCallback callback, void* userdata) {
+	_keypress_cb = callback;
+	_keypress_cb_userdata = userdata;
 }
 
 } // namespace toy
