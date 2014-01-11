@@ -99,4 +99,12 @@ void Window::handle_close() {
 	_is_closing = true;
 }
 
+unsigned Window::width() const {
+	return _w;
+}
+
+unsigned Window::height() const {
+	return _h;
+}
+
 } // namespace toy

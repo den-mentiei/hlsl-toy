@@ -377,4 +377,17 @@ void DXRenderDevice::clear(const Float4 clear_color) {
 	_immediate_device->ClearDepthStencilView(_depth_stencil_view.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 255);
 }
 
+void DXRenderDevice::set_viewport(const unsigned w, const unsigned h) {
+	D3D11_VIEWPORT viewport;
+
+	viewport.Width = static_cast<float>(w);
+	viewport.Height = static_cast<float>(h);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+
+	_immediate_device->RSSetViewports(0, &viewport);
+}
+
 } // namespace toy

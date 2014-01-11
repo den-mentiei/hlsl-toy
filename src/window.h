@@ -15,6 +15,9 @@ public:
 
 	HWND handle() const;
 
+	unsigned width() const;
+	unsigned height() const;
+
 	static void register_class(HINSTANCE instance);
 private:
 	void close();
@@ -23,6 +26,7 @@ private:
 	void handle_close();
 
 	HWND _handle;
+	unsigned _w, _h;
 	bool _is_closing;
 };
 
