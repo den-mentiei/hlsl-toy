@@ -11,3 +11,22 @@
 *.lai
 *.la
 *.a
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Visual C++ cache files
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
+# Build results
+bin/
+
+# Build intermmediate files
+obj/
+
