@@ -22,6 +22,10 @@ LRESULT WINAPI Window::windows_proc(HWND handle, UINT message, WPARAM wparam, LP
 			window->handle_key_down(static_cast<unsigned>(wparam));
 			break;
 
+		case WM_MOUSEMOVE:
+			window->handle_mouse_move(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16));
+			break;
+
 		default:
 			return DefWindowProcW(handle, message, wparam, lparam);
 	}
@@ -114,6 +118,12 @@ void Window::handle_key_down(const unsigned key_code) {
 	}
 }
 
+void Window::handle_mouse_move(const unsigned x, const unsigned y) {
+	if (_mouse_move_cb) {
+		_mouse_move_cb(x, y, _mouse_move_cb_userdata);
+	}
+}
+
 unsigned Window::width() const {
 	return _w;
 }
@@ -125,6 +135,11 @@ unsigned Window::height() const {
 void Window::set_keypress_callback(KeypressCallback callback, void* userdata) {
 	_keypress_cb = callback;
 	_keypress_cb_userdata = userdata;
+}
+
+void Window::set_mouse_move_callback(MouseMoveCallback callback, void* userdata) {
+	_mouse_move_cb = callback;
+	_mouse_move_cb_userdata = userdata;
 }
 
 } // namespace toy

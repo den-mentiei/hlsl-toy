@@ -15,8 +15,10 @@ public:
 	bool work();
 private:
 	static void on_keypress_callback(const unsigned key_code, void* userdata);
+	static void on_mouse_move_callback(const unsigned x, const unsigned y, void* userdata);
 
 	void handle_keypress(const unsigned key_code);
+	void handle_mouse_move(const unsigned x, const unsigned y);
 
 	bool load_toy(const wchar_t* path);
 	void create_scene();
@@ -34,6 +36,7 @@ private:
 
 	__declspec(align(16))
 	struct ToyParameters {
+		Float4 mouse;
 		Float2 resolution;
 		float time;
 	};
