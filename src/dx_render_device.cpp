@@ -51,8 +51,56 @@ bool DXRenderDevice::init(const Window& window) {
 	if (FAILED(hr)) {
 		return false;
 	}
-
 	adapter->Release();
+
+	return create_back_buffer_and_dst();
+}
+
+bool DXRenderDevice::create_back_buffer_and_dst() {
+	HRESULT hr = _swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&_back_buffer));
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	D3D11_TEXTURE2D_DESC back_buffer_description;
+	_back_buffer->GetDesc(&back_buffer_description);
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtv_description;
+	// TODO: MSAA support
+	rtv_description.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtv_description.Texture2DArray.MipSlice = 0;
+	rtv_description.Texture2DArray.ArraySize = 1;
+	rtv_description.Format = back_buffer_description.Format;
+
+	hr = _device->CreateRenderTargetView(_back_buffer.get(), &rtv_description, &_back_buffer_rtv);
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	D3D11_TEXTURE2D_DESC dst_description;
+	dst_description.Width = back_buffer_description.Width;
+	dst_description.Height = back_buffer_description.Height;
+	dst_description.MipLevels = 1;
+	dst_description.ArraySize = 1;
+	dst_description.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dst_description.SampleDesc.Count = 1;
+	dst_description.SampleDesc.Quality = 0;
+	dst_description.Usage = D3D11_USAGE_DEFAULT;
+	dst_description.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	dst_description.CPUAccessFlags = 0;
+	dst_description.MiscFlags = 0;
+
+	hr = _device->CreateTexture2D(&dst_description, 0, &_depth_stencil);
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	hr = _device->CreateDepthStencilView(_depth_stencil.get(), 0, &_depth_stencil_view);
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	_immediate_device->OMSetRenderTargets(1, &_back_buffer_rtv, _depth_stencil_view.get());
 
 	return true;
 }
