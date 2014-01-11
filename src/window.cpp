@@ -57,15 +57,16 @@ void Window::open(HINSTANCE instance, const wchar_t* title, const unsigned w, co
 	RECT desktop_rect;
 	::GetClientRect(::GetDesktopWindow(), &desktop_rect);
 	unsigned x = (desktop_rect.right - w) / 2;
-	unsigned y = (desktop_rect.right - w) / 2;
+	unsigned y = (desktop_rect.bottom - h) / 2;
 
-	RECT windows_rect;
-	windows_rect.left = x;
-	windows_rect.right = windows_rect.left + w;
-	windows_rect.top = y;
-	windows_rect.bottom = windows_rect.top + h;
+	RECT window_rect;
+	window_rect.left = x;
+	window_rect.right = window_rect.left + w;
+	window_rect.top = y;
+	window_rect.bottom = window_rect.top + h;
+	::AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, 0);
 
-	_handle = ::CreateWindowW(WINDOW_CLASS, title, 0, x, y, w, h, 0, 0, instance, 0);
+	_handle = ::CreateWindowW(WINDOW_CLASS, title, WS_OVERLAPPEDWINDOW, window_rect.left, window_rect.top, window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, 0, 0, instance, 0);
 	::SetWindowLong(_handle, GWL_USERDATA, reinterpret_cast<LONG>(this));
 
 	::ShowWindow(_handle, SW_SHOW);
