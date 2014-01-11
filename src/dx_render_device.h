@@ -75,6 +75,7 @@ private:
 	ComPtr<ID3D11Buffer> _index_buffers[MAX_INDEX_BUFFERS];
 	ComPtr<ID3D11InputLayout> _input_layout[MAX_INPUT_LAYOUTS];
 	ComPtr<ID3D11VertexShader> _vertex_shaders[MAX_VERTEX_SHADERS];
+	unsigned _vertex_shader_il[MAX_VERTEX_SHADERS];
 
 	unsigned _n_constant_buffers;
 	unsigned _n_vertex_buffers;

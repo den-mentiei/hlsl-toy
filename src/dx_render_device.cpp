@@ -260,7 +260,7 @@ unsigned DXRenderDevice::create_vertex_shader(const char* const code, const size
 		return MAX_VERTEX_SHADERS + 1;
 	}
 
-	unsigned il = create_input_layout(vertex_description, vs_blob);
+	_vertex_shader_il[_n_vertex_shaders] = create_input_layout(vertex_description, vs_blob);
 
 	_n_vertex_shaders++;
 	return _n_vertex_shaders - 1;
