@@ -12,7 +12,7 @@ LRESULT WINAPI Window::windows_proc(HWND handle, UINT message, WPARAM wparam, LP
 	if (window == nullptr || window->is_closing()) {
 		return DefWindowProcW(handle, message, wparam, lparam);
 	}
-
+	
 	switch (message) {
 		case WM_CLOSE:
 			window->handle_close();
@@ -22,8 +22,24 @@ LRESULT WINAPI Window::windows_proc(HWND handle, UINT message, WPARAM wparam, LP
 			window->handle_key_down(static_cast<unsigned>(wparam));
 			break;
 
+		case WM_LBUTTONDOWN:
+			window->handle_mouse_down(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), Mouse::B_LEFT);
+			break;
+
+		case WM_RBUTTONDOWN:
+			window->handle_mouse_down(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), Mouse::B_RIGHT);
+			break;
+
+		case WM_LBUTTONUP:
+			window->handle_mouse_up(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), Mouse::B_LEFT);
+			break;
+
+		case WM_RBUTTONUP:
+			window->handle_mouse_up(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), Mouse::B_RIGHT);
+			break;
+
 		case WM_MOUSEMOVE:
-			window->handle_mouse_move(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16));
+			window->handle_mouse_move(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), wparam);
 			break;
 
 		default:
@@ -118,9 +134,35 @@ void Window::handle_key_down(const unsigned key_code) {
 	}
 }
 
-void Window::handle_mouse_move(const unsigned x, const unsigned y) {
+void Window::handle_mouse_move(const unsigned x, const unsigned y, unsigned state) {
 	if (_mouse_move_cb) {
-		_mouse_move_cb(x, y, _mouse_move_cb_userdata);
+		Mouse::Button button;
+		switch (state) {
+			case MK_LBUTTON:
+				button = Mouse::B_LEFT;
+				break;
+
+			case MK_RBUTTON:
+				button = Mouse::B_RIGHT;
+				break;
+
+			default:
+				button = Mouse::B_NONE;
+				break;
+		}
+		_mouse_move_cb(x, y, button, _mouse_move_cb_userdata);
+	}
+}
+
+void Window::handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (_mouse_down_cb) {
+		_mouse_down_cb(x, y, button, _mouse_down_cb_userdata);
+	}
+}
+
+void Window::handle_mouse_up(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (_mouse_up_cb) {
+		_mouse_up_cb(x, y, button, _mouse_up_cb_userdata);
 	}
 }
 
@@ -137,9 +179,19 @@ void Window::set_keypress_callback(KeypressCallback callback, void* userdata) {
 	_keypress_cb_userdata = userdata;
 }
 
-void Window::set_mouse_move_callback(MouseMoveCallback callback, void* userdata) {
+void Window::set_mouse_move_callback(MouseCallback callback, void* userdata) {
 	_mouse_move_cb = callback;
 	_mouse_move_cb_userdata = userdata;
+}
+
+void Window::set_mouse_down_callback(MouseCallback callback, void* userdata) {
+	_mouse_down_cb = callback;
+	_mouse_down_cb_userdata = userdata;
+}
+
+void Window::set_mouse_up_callback(MouseCallback callback, void* userdata) {
+	_mouse_up_cb = callback;
+	_mouse_up_cb_userdata = userdata;
 }
 
 } // namespace toy

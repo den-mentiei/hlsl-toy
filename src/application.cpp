@@ -5,6 +5,7 @@
 #include "math/float3.h"
 #include "math/float4.h"
 
+#include <cmath>
 #include <ctime>
 #include <cstring>
 
@@ -153,14 +154,41 @@ void Application::handle_keypress(const unsigned key_code) {
 	}	
 }
 
-void Application::on_mouse_move_callback(const unsigned x, const unsigned y, void* userdata) {
+void Application::on_mouse_move_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
 	Application* app = static_cast<Application*>(userdata);
-	app->handle_mouse_move(x, y);
+	app->handle_mouse_move(x, y, button);
 }
 
-void Application::handle_mouse_move(const unsigned x, const unsigned y) {
-	_toy_parameters.mouse.x = float(x);
-	_toy_parameters.mouse.y = float(y);
+void Application::handle_mouse_move(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (button == Mouse::B_LEFT) {
+		_toy_parameters.mouse.x = float(x);
+		_toy_parameters.mouse.y = float(y);
+	}
+}
+
+void Application::on_mouse_down_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_mouse_down(x, y, button);
+}
+
+
+void Application::handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (button == Mouse::B_LEFT) {
+		_toy_parameters.mouse.z = float(x);
+		_toy_parameters.mouse.w = float(y);
+	}
+}
+
+void Application::on_mouse_up_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_mouse_up(x, y, button);
+}
+
+void Application::handle_mouse_up(const unsigned x, const unsigned y, Mouse::Button button) {
+	if (button == Mouse::B_LEFT) {
+		_toy_parameters.mouse.z = -std::abs(_toy_parameters.mouse.z);
+		_toy_parameters.mouse.w = -std::abs(_toy_parameters.mouse.w);
+	}
 }
 
 } // namespace toy
