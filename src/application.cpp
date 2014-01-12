@@ -159,7 +159,7 @@ void Application::handle_keypress(const unsigned key_code) {
 				_render_device.update_pixel_shader(_triangles.ps, _toy.code(), _toy.code_length());
 			}
 			break;
-	}	
+	}
 }
 
 void Application::on_mouse_move_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {

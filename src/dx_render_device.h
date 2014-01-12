@@ -63,13 +63,14 @@ public:
 	unsigned create_vertex_shader(const char* const code, const size_t length, const VertexDescription& vertex_description);
 	unsigned create_pixel_shader(const char* const code, const size_t length);
 
-	void update_pixel_shader(unsigned shader, const char* const code, const size_t length);
+	void update_pixel_shader(const unsigned shader, const char* const code, const size_t length);
 
 	unsigned create_dst_state(const bool depth_enabled);
 	unsigned create_rasterizer_state();
 	unsigned create_blend_state(const bool blend_enabled);
 
 	unsigned create_texture(const wchar_t* const path);
+	void update_texture(const unsigned texture, const wchar_t* const path);
 
 	enum SamplerFilter {
 		SF_POINT, SF_LINEAR, SF_ANISO
@@ -120,6 +121,7 @@ private:
 	unsigned create_input_layout(const VertexDescription& description, ComPtr<ID3D10Blob>& vs_blob);
 
 	bool compile_pixel_shader(const char* const code, const size_t length, ComPtr<ID3D11PixelShader>& destination);
+	bool load_texture(const wchar_t* const path, ComPtr<ID3D11ShaderResourceView>& destination);
 
 	ComPtr<ID3D11Device> _device;
 	ComPtr<ID3D11DeviceContext> _immediate_device;
