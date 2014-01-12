@@ -32,6 +32,7 @@ struct VertexDescription {
 };
 
 class DXRenderDevice {
+public:
 	enum {
 		MAX_CONSTANT_BUFFERS = 4,
 		MAX_VERTEX_BUFFERS = 4,
@@ -45,7 +46,7 @@ class DXRenderDevice {
 		MAX_TEXTURES = 8,
 		MAX_SAMPLERS = 16
 	};
-public:
+
 	DXRenderDevice();
 
 	bool init(const Window& window);

@@ -24,6 +24,8 @@ private:
 	void handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button);
 	void handle_mouse_up(const unsigned x, const unsigned y, Mouse::Button button);
 
+	void reload();
+
 	bool load_toy(const wchar_t* path);
 	void create_scene();
 	
