@@ -75,6 +75,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 	if (!load_toy(toy_path)) {
 		return false;
 	}
+
 	create_scene();
 	_toy_parameters.mouse = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -108,6 +109,9 @@ void Application::create_scene() {
 	_triangles.dst_state = _render_device.create_dst_state(false);
 	_triangles.rasterizer_state = _render_device.create_rasterizer_state();
 	_triangles.blend_state = _render_device.create_blend_state(false);
+
+	unsigned test_texture = _render_device.create_texture(L"test.bmp");
+	unsigned test_sampler = _render_device.create_sampler(DXRenderDevice::SF_POINT, DXRenderDevice::SA_WRAP);
 }
 
 bool Application::work() {

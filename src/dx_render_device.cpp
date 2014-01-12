@@ -19,6 +19,8 @@ DXRenderDevice::DXRenderDevice()
 	, _n_dst_states(0)
 	, _n_rasterizer_states(0)
 	, _n_blend_states(0)
+	, _n_texture_srvs(0)
+	, _n_sampler_states(0)
 {}
 
 bool DXRenderDevice::init(const Window& window) {
@@ -370,6 +372,49 @@ unsigned DXRenderDevice::create_blend_state(const bool blend_enabled) {
 
 	_n_blend_states++;
 	return _n_blend_states - 1;
+}
+
+unsigned DXRenderDevice::create_texture(const wchar_t* const path) {
+	assert(_n_texture_srvs < MAX_TEXTURES);
+	assert(path != nullptr);
+
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(_device.get(), path, 0, 0, &_texture_srvs[_n_texture_srvs], 0);
+	if (FAILED(hr)) {
+		return MAX_TEXTURES + 1;
+	}
+
+	_n_texture_srvs++;
+	return _n_texture_srvs - 1;
+}
+
+unsigned DXRenderDevice::create_sampler(SamplerFilter filter, SamplerAddress address) {
+	assert(_n_sampler_states < MAX_SAMPLERS);
+
+	// Order dependent on SamplerFilter enum
+	static const D3D11_FILTER filter_modes[] = {
+		D3D11_FILTER_MIN_MAG_MIP_POINT,
+		D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D11_FILTER_ANISOTROPIC
+	};
+	// Order dependent on SamplerAddress enum
+	static const D3D11_TEXTURE_ADDRESS_MODE address_modes[] = {
+		D3D11_TEXTURE_ADDRESS_WRAP, 
+		D3D11_TEXTURE_ADDRESS_CLAMP
+	};
+
+	CD3D11_SAMPLER_DESC sampler_description(D3D11_DEFAULT);
+	sampler_description.Filter = filter_modes[filter];
+	sampler_description.AddressU = address_modes[address];
+	sampler_description.AddressV = address_modes[address];
+	sampler_description.AddressW = address_modes[address];
+
+	HRESULT hr = _device->CreateSamplerState(&sampler_description, &_sampler_states[_n_sampler_states]);
+	if (FAILED(hr)) {
+		return MAX_SAMPLERS + 1;
+	}
+
+	_n_sampler_states++;
+	return _n_sampler_states - 1;
 }
 
 void DXRenderDevice::render(const Batch& batch) {
