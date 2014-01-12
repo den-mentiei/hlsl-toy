@@ -112,7 +112,8 @@ void Application::create_scene() {
 
 	_triangles.textures[0] = _render_device.create_texture(L"test.bmp");
 	_triangles.n_textures = 1;
-	//unsigned test_sampler = _render_device.create_sampler(DXRenderDevice::SF_POINT, DXRenderDevice::SA_WRAP);
+	_triangles.samplers[0] = _render_device.create_sampler(DXRenderDevice::SF_POINT, DXRenderDevice::SA_WRAP);
+	_triangles.n_samplers = 1;
 }
 
 bool Application::work() {

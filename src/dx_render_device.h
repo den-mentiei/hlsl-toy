@@ -86,7 +86,8 @@ public:
 		};
 
 		enum {
-			B_MAX_TEXTURES = 4
+			B_MAX_TEXTURES = 4,
+			B_MAX_SAMPLERS = 4
 		};
 
 		size_t start_index;
@@ -102,6 +103,8 @@ public:
 		unsigned ps;
 		unsigned textures[B_MAX_TEXTURES];
 		unsigned n_textures;
+		unsigned samplers[B_MAX_SAMPLERS];
+		unsigned n_samplers;
 		Type type;
 	};
 

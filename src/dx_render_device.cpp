@@ -437,6 +437,12 @@ void DXRenderDevice::render(const Batch& batch) {
 		srvs[i] = _texture_srvs[batch.textures[i]].get();
 	}
 	_immediate_device->PSSetShaderResources(0, batch.n_textures, srvs);
+	
+	ID3D11SamplerState* samplers[Batch::B_MAX_SAMPLERS] = {};
+	for (unsigned i = 0; i < batch.n_samplers; ++i) {
+		samplers[i] = _sampler_states[batch.samplers[i]].get();
+	}
+	_immediate_device->PSSetSamplers(0, batch.n_samplers, samplers);
 
 	_immediate_device->OMSetDepthStencilState(_dst_states[batch.dst_state].get(), 0);
 	_immediate_device->OMSetBlendState(_blend_states[batch.blend_state].get(), 0, 0xFFFFFFFF);
