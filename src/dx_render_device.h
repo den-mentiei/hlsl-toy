@@ -41,7 +41,9 @@ class DXRenderDevice {
 		MAX_PIXEL_SHADERS = 4,
 		MAX_DST_STATES = 4,
 		MAX_RASTERIZER_STATES = 4,
-		MAX_BLEND_STATES = 4
+		MAX_BLEND_STATES = 4,
+		MAX_TEXTURES = 8,
+		MAX_SAMPLERS = 16
 	};
 public:
 	DXRenderDevice();
@@ -67,10 +69,25 @@ public:
 	unsigned create_rasterizer_state();
 	unsigned create_blend_state(const bool blend_enabled);
 
+	unsigned create_texture(const wchar_t* const path);
+
+	enum SamplerFilter {
+		SF_POINT, SF_LINEAR, SF_ANISO
+	};
+	enum SamplerAddress {
+		SA_WRAP, SA_CLAMP
+	};
+	unsigned create_sampler(SamplerFilter filter, SamplerAddress address);
+
 	struct Batch {
 		enum Type {
 			BT_TRIANGLE_LIST,
 			BT_TRIANGLE_STRIP
+		};
+
+		enum {
+			B_MAX_TEXTURES = 4,
+			B_MAX_SAMPLERS = 4
 		};
 
 		size_t start_index;
@@ -84,6 +101,10 @@ public:
 		unsigned blend_state;
 		unsigned vs;
 		unsigned ps;
+		unsigned textures[B_MAX_TEXTURES];
+		unsigned n_textures;
+		unsigned samplers[B_MAX_SAMPLERS];
+		unsigned n_samplers;
 		Type type;
 	};
 
@@ -118,6 +139,8 @@ private:
 	ComPtr<ID3D11DepthStencilState> _dst_states[MAX_DST_STATES];
 	ComPtr<ID3D11RasterizerState> _rasterizer_states[MAX_DST_STATES];
 	ComPtr<ID3D11BlendState> _blend_states[MAX_BLEND_STATES];
+	ComPtr<ID3D11ShaderResourceView> _texture_srvs[MAX_TEXTURES];
+	ComPtr<ID3D11SamplerState> _sampler_states[MAX_SAMPLERS];
 
 	unsigned _vertex_shader_il[MAX_VERTEX_SHADERS];
 
@@ -130,6 +153,8 @@ private:
 	unsigned _n_dst_states;
 	unsigned _n_rasterizer_states;
 	unsigned _n_blend_states;
+	unsigned _n_texture_srvs;
+	unsigned _n_sampler_states;
 };
 
 } // namespace toy
