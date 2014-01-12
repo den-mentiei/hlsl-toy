@@ -85,6 +85,10 @@ public:
 			BT_TRIANGLE_STRIP
 		};
 
+		enum {
+			B_MAX_TEXTURES = 4
+		};
+
 		size_t start_index;
 		size_t count;
 		size_t stride;
@@ -96,6 +100,8 @@ public:
 		unsigned blend_state;
 		unsigned vs;
 		unsigned ps;
+		unsigned textures[B_MAX_TEXTURES];
+		unsigned n_textures;
 		Type type;
 	};
 

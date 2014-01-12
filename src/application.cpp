@@ -110,8 +110,9 @@ void Application::create_scene() {
 	_triangles.rasterizer_state = _render_device.create_rasterizer_state();
 	_triangles.blend_state = _render_device.create_blend_state(false);
 
-	unsigned test_texture = _render_device.create_texture(L"test.bmp");
-	unsigned test_sampler = _render_device.create_sampler(DXRenderDevice::SF_POINT, DXRenderDevice::SA_WRAP);
+	_triangles.textures[0] = _render_device.create_texture(L"test.bmp");
+	_triangles.n_textures = 1;
+	//unsigned test_sampler = _render_device.create_sampler(DXRenderDevice::SF_POINT, DXRenderDevice::SA_WRAP);
 }
 
 bool Application::work() {
