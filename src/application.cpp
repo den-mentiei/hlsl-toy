@@ -8,6 +8,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstring>
+#include <algorithm>
 
 namespace toy {
 
@@ -110,8 +111,12 @@ void Application::create_scene() {
 	_triangles.rasterizer_state = _render_device.create_rasterizer_state();
 	_triangles.blend_state = _render_device.create_blend_state(false);
 
-	_triangles.textures[0] = _render_device.create_texture(L"test.bmp");
-	_triangles.n_textures = 1;
+	const unsigned n_textures = std::max(0u, std::min(_toy.n_textures(), static_cast<unsigned>(DXRenderDevice::MAX_TEXTURES)));
+	for (unsigned i = 0; i < n_textures; ++i) {
+		_triangles.textures[i] = _render_device.create_texture(_toy.texture_path(i));
+	}
+	_triangles.n_textures = n_textures;
+
 	_triangles.samplers[0] = _render_device.create_sampler(DXRenderDevice::SF_POINT, DXRenderDevice::SA_WRAP);
 	_triangles.samplers[1] = _render_device.create_sampler(DXRenderDevice::SF_LINEAR, DXRenderDevice::SA_WRAP);
 	_triangles.samplers[2] = _render_device.create_sampler(DXRenderDevice::SF_ANISO, DXRenderDevice::SA_WRAP);
@@ -155,11 +160,9 @@ void Application::on_keypress_callback(const unsigned key_code, void* userdata) 
 void Application::handle_keypress(const unsigned key_code) {
 	switch (key_code) {
 		case VK_F5:
-			if (_toy.init(_toy_path)) {
-				_render_device.update_pixel_shader(_triangles.ps, _toy.code(), _toy.code_length());
-			}
+			reload();
 			break;
-	}	
+	}
 }
 
 void Application::on_mouse_move_callback(const unsigned x, const unsigned y, Mouse::Button button, void* userdata) {
@@ -179,7 +182,6 @@ void Application::on_mouse_down_callback(const unsigned x, const unsigned y, Mou
 	app->handle_mouse_down(x, y, button);
 }
 
-
 void Application::handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button) {
 	if (button == Mouse::B_LEFT) {
 		_toy_parameters.mouse.z = float(x);
@@ -197,6 +199,27 @@ void Application::handle_mouse_up(const unsigned x, const unsigned y, Mouse::But
 		_toy_parameters.mouse.z = -std::abs(_toy_parameters.mouse.z);
 		_toy_parameters.mouse.w = -std::abs(_toy_parameters.mouse.w);
 	}
+}
+
+void Application::reload() {
+	if (!_toy.init(_toy_path)) {
+		// TODO: report errors
+		return;
+	}
+	_render_device.update_pixel_shader(_triangles.ps, _toy.code(), _toy.code_length());
+
+	const unsigned n_toy_textures = _toy.n_textures();
+	const unsigned n_updated_textures = std::min(n_toy_textures, _triangles.n_textures);
+
+	// Updates existing textures
+	for (unsigned i = 0; i < n_updated_textures; ++i) {
+		_render_device.update_texture(i, _toy.texture_path(i));
+	}
+	// Appends new ones
+	for (unsigned i = n_updated_textures; i < _toy.n_textures(); ++i) {
+		_triangles.textures[i] = _render_device.create_texture(_toy.texture_path(i));
+	}
+	_triangles.n_textures = _toy.n_textures();
 }
 
 } // namespace toy

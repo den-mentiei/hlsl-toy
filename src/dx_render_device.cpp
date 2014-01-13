@@ -289,7 +289,7 @@ unsigned DXRenderDevice::create_pixel_shader(const char* const code, const size_
 	return _n_pixel_shaders - 1;
 }
 
-void DXRenderDevice::update_pixel_shader(unsigned shader, const char* const code, const size_t length) {
+void DXRenderDevice::update_pixel_shader(const unsigned shader, const char* const code, const size_t length) {
 	assert(shader < _n_pixel_shaders);
 	assert(code != nullptr);
 	assert(length > 0);
@@ -377,14 +377,34 @@ unsigned DXRenderDevice::create_blend_state(const bool blend_enabled) {
 unsigned DXRenderDevice::create_texture(const wchar_t* const path) {
 	assert(_n_texture_srvs < MAX_TEXTURES);
 	assert(path != nullptr);
-
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(_device.get(), path, 0, 0, &_texture_srvs[_n_texture_srvs], 0);
-	if (FAILED(hr)) {
+	
+	if (!load_texture(path, _texture_srvs[_n_texture_srvs])) {
 		return MAX_TEXTURES + 1;
 	}
 
 	_n_texture_srvs++;
 	return _n_texture_srvs - 1;
+}
+
+bool DXRenderDevice::load_texture(const wchar_t* const path, ComPtr<ID3D11ShaderResourceView>& destination) {
+	ID3D11ShaderResourceView* texture = nullptr;
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(_device.get(), path, 0, 0, &texture, 0);
+	
+	if (FAILED(hr)) {
+		return false;
+	}
+	destination.set(texture);
+
+	return true;
+}
+
+void DXRenderDevice::update_texture(const unsigned texture, const wchar_t* const path) {
+	assert(texture < _n_texture_srvs);
+	assert(path != nullptr);
+
+	if (!load_texture(path, _texture_srvs[texture])) {
+		// TODO: reprot error somehow
+	}
 }
 
 unsigned DXRenderDevice::create_sampler(SamplerFilter filter, SamplerAddress address) {
