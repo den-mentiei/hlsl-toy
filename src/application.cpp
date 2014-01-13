@@ -208,9 +208,18 @@ void Application::reload() {
 	}
 	_render_device.update_pixel_shader(_triangles.ps, _toy.code(), _toy.code_length());
 
-	for (unsigned i = 0; i < _toy.n_textures(); ++i) {
+	const unsigned n_toy_textures = _toy.n_textures();
+	const unsigned n_updated_textures = std::min(n_toy_textures, _triangles.n_textures);
+
+	// Updates existing textures
+	for (unsigned i = 0; i < n_updated_textures; ++i) {
 		_render_device.update_texture(i, _toy.texture_path(i));
 	}
+	// Appends new ones
+	for (unsigned i = n_updated_textures; i < _toy.n_textures(); ++i) {
+		_triangles.textures[i] = _render_device.create_texture(_toy.texture_path(i));
+	}
+	_triangles.n_textures = _toy.n_textures();
 }
 
 } // namespace toy
