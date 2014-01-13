@@ -395,6 +395,8 @@ bool DXRenderDevice::load_texture(const wchar_t* const path, ComPtr<ID3D11Shader
 	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(_device.get(), path, 0, 0, &texture, 0);
 	
 	if (FAILED(hr)) {
+		// TODO: remove this crap
+		::MessageBox(0, path, L"Texture is not loaded", MB_ICONASTERISK);
 		return false;
 	}
 	destination.set(texture);
