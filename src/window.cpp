@@ -42,6 +42,10 @@ LRESULT WINAPI Window::windows_proc(HWND handle, UINT message, WPARAM wparam, LP
 			window->handle_mouse_move(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), wparam);
 			break;
 
+		case WM_SIZE:
+			window->handle_resize(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16));
+			break;
+
 		default:
 			return DefWindowProcW(handle, message, wparam, lparam);
 	}
@@ -128,6 +132,15 @@ void Window::handle_close() {
 	_is_closing = true;
 }
 
+void Window::handle_resize(const unsigned w, const unsigned h) {
+	_w = w;
+	_h = h;
+
+	if (_resize_cb) {
+		_resize_cb(w, h, _resize_cb_userdata);
+	}
+}
+
 void Window::handle_key_down(const unsigned key_code) {
 	if (_keypress_cb) {
 		_keypress_cb(key_code, _keypress_cb_userdata);
@@ -192,6 +205,11 @@ void Window::set_mouse_down_callback(MouseCallback callback, void* userdata) {
 void Window::set_mouse_up_callback(MouseCallback callback, void* userdata) {
 	_mouse_up_cb = callback;
 	_mouse_up_cb_userdata = userdata;
+}
+
+void Window::set_resize_callback(ResizeCallback callback, void* userdata) {
+	_resize_cb = callback;
+	_resize_cb_userdata = userdata;
 }
 
 } // namespace toy

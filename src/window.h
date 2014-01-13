@@ -33,11 +33,15 @@ public:
 	void set_mouse_move_callback(MouseCallback callback, void* userdata);
 	void set_mouse_down_callback(MouseCallback callback, void* userdata);
 	void set_mouse_up_callback(MouseCallback callback, void* userdata);
+
+	typedef void (*ResizeCallback)(const unsigned w, const unsigned h, void* userdata);
+	void set_resize_callback(ResizeCallback callback, void* userdata);
 private:
 	void close();
 
 	static LRESULT WINAPI windows_proc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
 	void handle_close();
+	void handle_resize(const unsigned w, const unsigned h);
 	void handle_key_down(const unsigned key_code);
 	void handle_mouse_move(const unsigned x, const unsigned y, unsigned state);
 	void handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button);
@@ -51,6 +55,8 @@ private:
 	void* _mouse_down_cb_userdata;
 	MouseCallback _mouse_up_cb;
 	void* _mouse_up_cb_userdata;
+	ResizeCallback _resize_cb;
+	void* _resize_cb_userdata;
 
 	HWND _handle;
 	unsigned _w, _h;

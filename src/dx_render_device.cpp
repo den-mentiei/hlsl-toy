@@ -480,6 +480,23 @@ void DXRenderDevice::render(const Batch& batch) {
 	_immediate_device->DrawIndexed(batch.count, batch.start_index, 0);
 }
 
+void DXRenderDevice::resize_swapchain(const unsigned w, const unsigned h) {
+	DXGI_SWAP_CHAIN_DESC swapchain_description;
+	_swap_chain->GetDesc(&swapchain_description);
+
+	_immediate_device->Flush();
+
+	_back_buffer_rtv.set(nullptr);
+	_back_buffer.set(nullptr);
+	_depth_stencil_view.set(nullptr);
+	_depth_stencil.set(nullptr);
+
+	_immediate_device->OMSetRenderTargets(0, 0, 0);
+	_swap_chain->ResizeBuffers(swapchain_description.BufferCount, w, h, swapchain_description.BufferDesc.Format, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+
+	create_back_buffer_and_dst();
+}
+
 void DXRenderDevice::clear(const Float4 clear_color) {
 	_immediate_device->ClearRenderTargetView(_back_buffer_rtv.get(), &clear_color.x);
 	_immediate_device->ClearDepthStencilView(_depth_stencil_view.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 255);
