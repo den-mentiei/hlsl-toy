@@ -69,6 +69,7 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 	_main_window.open(instance, L"HLSL Toy (c) Denis Mentey", 1280, 720);
 	_main_window.set_keypress_callback(Application::on_keypress_callback, this);
 	_main_window.set_mouse_move_callback(Application::on_mouse_move_callback, this);
+	_main_window.set_resize_callback(Application::on_resize_callback, this);
 	if (!_render_device.init(_main_window)) {
 		return false;
 	}
@@ -151,6 +152,15 @@ void Application::update_toy_parameters() {
 	_toy_parameters.time = static_cast<float>(_timer.elapsed());
 
 	_render_device.update_constant_buffer(_triangles.constants, _toy_parameters);
+}
+
+void Application::on_resize_callback(const unsigned w, const unsigned h, void* userdata) {
+	Application* app = static_cast<Application*>(userdata);
+	app->handle_resize(w, h);
+}
+
+void Application::handle_resize(const unsigned w, const unsigned h) {
+	_render_device.resize_swapchain(w, h);
 }
 
 void Application::on_keypress_callback(const unsigned key_code, void* userdata) {
