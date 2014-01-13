@@ -1,6 +1,8 @@
 #include "toy_file.h"
+#include <locale>
 #include <sstream>
 #include <fstream>
+#include <cassert>
 
 namespace toy {
 
@@ -21,9 +23,80 @@ bool ToyFile::init(const wchar_t* path) {
 void ToyFile::parse_textures() {
 	_textures.clear();
 
-	for (size_t i = 0; i < _code.length(); ++i) {
-		// TODO: parse comments with texture filenames
+	enum State {
+		LINE_START, SLASH, COMMENT, TEXTURE_NAME, WAIT_FOR_LINE, END
+	} state = LINE_START;
+
+	size_t i = 0;
+	const char* const s = _code.c_str();
+	const char* texture_name_start = nullptr;
+	std::locale locale;
+	while (state != END) {
+		switch (state) {
+			case LINE_START:
+				if (s[i] == '/') {
+					state = SLASH;
+				} else {
+					state = WAIT_FOR_LINE;
+				}
+				i++;
+				break;
+
+			case SLASH:
+				if (s[i] == '/') {
+					state = COMMENT;
+					i++;
+				} else {
+					state = WAIT_FOR_LINE;
+				}
+				break;
+
+			case COMMENT:
+				// skips whitespace
+				if (s[i] == ' ' || s[i] == '\t') {
+					i++;
+				} else if (s[i] == '\n') {
+					state = LINE_START;
+					i++;
+				} else if (s[i] == '\0') {
+					state = END;
+				} else {
+					texture_name_start = s + i;
+					state = TEXTURE_NAME;
+					i++;
+				}
+				break;
+
+			case TEXTURE_NAME:
+				if (s[i] == '\n') {
+					add_texture_path(texture_name_start, s + i);
+					state = LINE_START;
+					i++;
+				} else if (std::isalnum(s[i], locale) || s[i] == '.' || s[i] == '_' || s[i] == '-') {
+					i++;
+				} else {
+					state = WAIT_FOR_LINE;
+				}
+				break;
+
+			case WAIT_FOR_LINE:
+				if (s[i] == '\n') {
+					state = LINE_START;
+				} else if (s[i] == '\0') {
+					state = END;
+				}
+				i++;
+				break;
+		}
 	}
+}
+
+void ToyFile::add_texture_path(const char* const start, const char* const end) {
+	assert(start != nullptr);
+	assert(end != nullptr);
+	assert(start < end);
+
+	_textures.push_back(std::wstring(start, end));
 }
 
 const char* ToyFile::code() const {

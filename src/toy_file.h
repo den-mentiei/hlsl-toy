@@ -16,6 +16,7 @@ public:
 	unsigned n_textures() const;
 private:
 	void parse_textures();
+	void add_texture_path(const char* const start, const char* const end);
 
 	std::vector<std::wstring> _textures;
 	std::string _code;

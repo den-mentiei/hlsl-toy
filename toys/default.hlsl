@@ -1,3 +1,7 @@
+// tex16.png
+// tex06.jpg
+// tex09.jpg
+
 cbuffer Parameters {
 	// mouse pixel coords. xy: current (if MLB down), zw: click
 	float4 mouse;
