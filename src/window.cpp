@@ -75,6 +75,11 @@ Window::Window()
 	, _is_closing(false)
 	, _w(0)
 	, _h(0)
+	, _keypress_cb(nullptr)
+	, _mouse_move_cb(nullptr)
+	, _mouse_down_cb(nullptr)
+	, _mouse_up_cb(nullptr)
+	, _resize_cb(nullptr)
 {}
 
 Window::~Window() {
