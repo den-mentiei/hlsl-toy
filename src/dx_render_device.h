@@ -110,6 +110,7 @@ public:
 		Type type;
 	};
 
+	void resize_swapchain(const unsigned w, const unsigned h);
 	void clear(const Float4 clear_color);
 	void set_viewport(const unsigned w, const unsigned h);
 	void render(const Batch& batch);
