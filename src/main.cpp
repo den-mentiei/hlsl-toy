@@ -3,13 +3,20 @@
 
 using namespace toy;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-	Application app;
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
+	int argc;
+	LPWSTR* argv = ::CommandLineToArgvW(lpCmdLine, &argc);
 
-	if (!app.init(hInstance, L"toys/default.hlsl")) {
+	if (argc < 1) {
+		return 1;
+	}
+
+	Application app;
+	if (!app.init(hInstance, argv[0])) {
 		return 1;
 	}
 	while (app.work()) {};
 
+	::LocalFree(argv);
 	return 0;
 }
