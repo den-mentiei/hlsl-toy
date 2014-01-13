@@ -301,8 +301,12 @@ void DXRenderDevice::update_pixel_shader(const unsigned shader, const char* cons
 
 bool DXRenderDevice::compile_pixel_shader(const char* const code, const size_t length, ComPtr<ID3D11PixelShader>& destination) {
 	ComPtr<ID3DBlob> ps_blob;
-	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "ps_main", "ps_4_0", 0, 0, 0, &ps_blob, 0, 0);
+	ComPtr<ID3DBlob> error_blob;
+	HRESULT hr = D3DX11CompileFromMemory(code, length, 0, 0, 0, "ps_main", "ps_4_0", 0, 0, 0, &ps_blob, &error_blob, 0);
 	if (FAILED(hr)) {
+		// TODO: remove this crap
+		const char* const msg = static_cast<char*>(error_blob->GetBufferPointer());
+		::MessageBoxA(0, msg, "PS compilation error", MB_ICONASTERISK);
 		return false;
 	}
 
