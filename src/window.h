@@ -38,6 +38,7 @@ private:
 
 	static LRESULT WINAPI windows_proc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
 	void handle_close();
+	void handle_resize(const unsigned w, const unsigned h);
 	void handle_key_down(const unsigned key_code);
 	void handle_mouse_move(const unsigned x, const unsigned y, unsigned state);
 	void handle_mouse_down(const unsigned x, const unsigned y, Mouse::Button button);

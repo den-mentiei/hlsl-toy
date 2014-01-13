@@ -42,6 +42,10 @@ LRESULT WINAPI Window::windows_proc(HWND handle, UINT message, WPARAM wparam, LP
 			window->handle_mouse_move(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16), wparam);
 			break;
 
+		case WM_SIZE:
+			window->handle_resize(unsigned(lparam & 0xFFFF), unsigned(lparam >> 16));
+			break;
+
 		default:
 			return DefWindowProcW(handle, message, wparam, lparam);
 	}
@@ -126,6 +130,11 @@ HWND Window::handle() const {
 
 void Window::handle_close() {
 	_is_closing = true;
+}
+
+void Window::handle_resize(const unsigned w, const unsigned h) {
+	_w = w;
+	_h = h;
 }
 
 void Window::handle_key_down(const unsigned key_code) {

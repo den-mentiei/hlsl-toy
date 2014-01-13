@@ -65,7 +65,8 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path) {
 
 	Window::register_class(instance);
 
-	_main_window.open(instance, L"HLSL Toy", 1280, 720);
+	// TODO: resolution settings?
+	_main_window.open(instance, L"HLSL Toy (c) Denis Mentey", 1280, 720);
 	_main_window.set_keypress_callback(Application::on_keypress_callback, this);
 	_main_window.set_mouse_move_callback(Application::on_mouse_move_callback, this);
 	if (!_render_device.init(_main_window)) {
