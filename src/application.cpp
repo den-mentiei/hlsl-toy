@@ -1,5 +1,6 @@
 #include "application.h"
 
+#include "options.h"
 #include "directx.h"
 #include "math/float2.h"
 #include "math/float3.h"
@@ -60,12 +61,12 @@ static const char* vs_shader_code = ""
 
 } // anonymous namespace
 
-bool Application::init(HINSTANCE instance, const wchar_t* toy_path, const unsigned w, const unsigned h) {
+bool Application::init(HINSTANCE instance, const Options& options) {
 	_instance = instance;
 
 	Window::register_class(instance);
 
-	_main_window.open(instance, L"HLSL Toy (c) Denis Mentey", w, h);
+	_main_window.open(instance, L"HLSL Toy (c) Denis Mentey", options.w(), options.h());
 	_main_window.set_keypress_callback(Application::on_keypress_callback, this);
 	_main_window.set_mouse_move_callback(Application::on_mouse_move_callback, this);
 	if (!_render_device.init(_main_window)) {
@@ -74,8 +75,8 @@ bool Application::init(HINSTANCE instance, const wchar_t* toy_path, const unsign
 
 	_main_window.set_resize_callback(Application::on_resize_callback, this);
 
-	_toy_path = toy_path;
-	if (!load_toy(toy_path)) {
+	_toy_path = options.toy_file();
+	if (!load_toy(_toy_path)) {
 		return false;
 	}
 

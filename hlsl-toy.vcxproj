@@ -97,6 +97,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\dx_render_device.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\options.cpp" />
     <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\toy_file.cpp" />
     <ClCompile Include="src\window.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="src\math\float2.h" />
     <ClInclude Include="src\math\float3.h" />
     <ClInclude Include="src\math\float4.h" />
+    <ClInclude Include="src\options.h" />
     <ClInclude Include="src\timer.h" />
     <ClInclude Include="src\toy_file.h" />
     <ClInclude Include="src\window.h" />
