@@ -12,7 +12,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 
 	Application app;
-	if (!app.init(hInstance, argv[1])) {
+	if (!app.init(hInstance, argv[1], 1280, 720)) {
 		return 1;
 	}
 	while (app.work()) {};
