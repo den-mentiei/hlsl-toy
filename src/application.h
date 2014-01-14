@@ -9,9 +9,11 @@
 
 namespace toy {
 
+class Options;
+
 class Application {
 public:
-	bool init(HINSTANCE instance, const wchar_t* toy_path);
+	bool init(HINSTANCE instance, const Options& options);
 	bool work();
 private:
 	static void on_resize_callback(const unsigned w, const unsigned h, void *userdata);

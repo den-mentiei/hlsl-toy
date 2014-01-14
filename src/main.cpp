@@ -1,22 +1,17 @@
 #include "windows.h"
 #include "application.h"
+#include "options.h"
 
 using namespace toy;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
-	int argc;
-	LPWSTR* argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-
-	if (argc < 2) {
-		return 1;
-	}
+	Options options;
 
 	Application app;
-	if (!app.init(hInstance, argv[1])) {
+	if (!app.init(hInstance, options)) {
 		return 1;
 	}
 	while (app.work()) {};
 
-	::LocalFree(argv);
 	return 0;
 }
