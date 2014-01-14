@@ -5,14 +5,14 @@ using namespace toy;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
 	int argc;
-	LPWSTR* argv = ::CommandLineToArgvW(lpCmdLine, &argc);
+	LPWSTR* argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
 
-	if (argc < 1) {
+	if (argc < 2) {
 		return 1;
 	}
 
 	Application app;
-	if (!app.init(hInstance, argv[0])) {
+	if (!app.init(hInstance, argv[1])) {
 		return 1;
 	}
 	while (app.work()) {};
