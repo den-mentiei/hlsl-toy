@@ -10,6 +10,9 @@
     <Filter Include="toys">
       <UniqueIdentifier>{416cba3e-dff7-451c-9793-c60952c31901}</UniqueIdentifier>
     </Filter>
+    <Filter Include="media">
+      <UniqueIdentifier>{86617bd1-63c4-4b2c-a887-3447ea33606b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -78,6 +81,9 @@
   <ItemGroup>
     <CustomBuild Include="toys\default.hlsl">
       <Filter>toys</Filter>
+    </CustomBuild>
+    <CustomBuild Include="media\noise.png">
+      <Filter>media</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
