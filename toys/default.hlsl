@@ -1,6 +1,4 @@
-// tex16.png
-// tex06.jpg
-// tex09.jpg
+// media/noise.png
 
 cbuffer Parameters {
 	// mouse pixel coords. xy: current (if MLB down), zw: click
@@ -15,6 +13,11 @@ Texture2D texture0;
 Texture2D texture1;
 Texture2D texture2;
 Texture2D texture3;
+Texture2D texture4;
+Texture2D texture5;
+Texture2D texture6;
+Texture2D texture7;
+Texture2D texture8;
 
 SamplerState sampler_point;
 SamplerState sampler_linear;
@@ -26,7 +29,5 @@ struct PS_Input {
 };
 
 float4 ps_main(PS_Input input) : SV_TARGET0 {
-	return texture0.Sample(sampler_linear, input.uv);
 	return float4(mouse.x / resolution.x, mouse.y / resolution.y, 0.0f, 1.0f);
-	return float4(input.uv.x * sin(time), input.uv.y * cos(time), 0.0f, 1.0f);
 }
