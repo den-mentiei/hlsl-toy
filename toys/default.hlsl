@@ -19,9 +19,9 @@ Texture2D texture6;
 Texture2D texture7;
 Texture2D texture8;
 
-SamplerState sampler_point;
-SamplerState sampler_linear;
-SamplerState sampler_aniso;
+SamplerState sampler_point : register(s0);
+SamplerState sampler_linear : register(s1);
+SamplerState sampler_aniso : register(s2);
 
 struct PS_Input {
 	float4 pos : SV_POSITION;
