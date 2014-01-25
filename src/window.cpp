@@ -217,4 +217,22 @@ void Window::set_resize_callback(ResizeCallback callback, void* userdata) {
 	_resize_cb_userdata = userdata;
 }
 
+std::wstring Window::open_file_dialog(LPCWSTR filter) {
+	OPENFILENAMEW ofn;
+	wchar_t buffer[MAX_PATH + 1];
+	buffer[0] = 0;
+	memset(&ofn, 0, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = _handle;
+	ofn.lpstrFile = buffer;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFilter = filter;
+	ofn.nFilterIndex = 0;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (TRUE == GetOpenFileNameW(&ofn))
+		return std::wstring(buffer);
+	return std::wstring();
+}
+
 } // namespace toy
