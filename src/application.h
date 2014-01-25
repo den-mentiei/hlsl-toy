@@ -54,7 +54,8 @@ private:
 
 	DXRenderDevice::Batch _triangles;
 	ToyFile _toy;
-	const wchar_t* _toy_path;
+	std::wstring _toy_filename;
+	std::wstring _toy_path;
 };
 
 } // namespace toy
