@@ -75,8 +75,21 @@ bool Application::init(HINSTANCE instance, const Options& options) {
 
 	_main_window.set_resize_callback(Application::on_resize_callback, this);
 
-	_toy_path = options.toy_file();
-	if (!load_toy(_toy_path)) {
+	if (options.toy_file())
+		_toy_filename = options.toy_file();
+	else
+		_toy_filename = std::move(_main_window.choose_toy_file_dialog());
+
+	if (_toy_filename.empty()) {
+		return false;
+	}
+
+	const auto last_separator
+		= std::find(_toy_filename.crbegin(), _toy_filename.crend(), '\\');
+	_toy_path = std::wstring(_toy_filename.cbegin(),
+		_toy_filename.cbegin() + (_toy_filename.crend() - last_separator));
+
+	if (!load_toy(_toy_filename.c_str())) {
 		return false;
 	}
 
@@ -87,9 +100,6 @@ bool Application::init(HINSTANCE instance, const Options& options) {
 }
 
 bool Application::load_toy(const wchar_t* path) {
-	if (path == nullptr) {
-		return false;
-	}
 	if (!_toy.init(path)) {
 		return false;
 	}
@@ -116,7 +126,8 @@ void Application::create_scene() {
 
 	const unsigned n_textures = std::max(0u, std::min(_toy.n_textures(), static_cast<unsigned>(DXRenderDevice::MAX_TEXTURES)));
 	for (unsigned i = 0; i < n_textures; ++i) {
-		_triangles.textures[i] = _render_device.create_texture(_toy.texture_path(i));
+		std::wstring fullname = _toy_path + _toy.texture_path(i);
+		_triangles.textures[i] = _render_device.create_texture(fullname.c_str());
 	}
 	_triangles.n_textures = n_textures;
 
@@ -214,7 +225,7 @@ void Application::handle_mouse_up(const unsigned x, const unsigned y, Mouse::But
 }
 
 void Application::reload() {
-	if (!_toy.init(_toy_path)) {
+	if (!_toy.init(_toy_path.c_str())) {
 		// TODO: report errors
 		return;
 	}
