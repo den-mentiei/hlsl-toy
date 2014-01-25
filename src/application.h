@@ -6,6 +6,7 @@
 #include "dx_render_device.h"
 #include "toy_file.h"
 #include "timer.h"
+#include "dumb_file_monitor.h"
 
 namespace toy {
 
@@ -56,6 +57,8 @@ private:
 	ToyFile _toy;
 	std::wstring _toy_filename;
 	std::wstring _toy_path;
+
+	DumbFileMonitor _toy_monitor;
 };
 
 } // namespace toy

@@ -36,6 +36,9 @@
     <ClCompile Include="src\options.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\dumb_file_monitor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\windows.h">
@@ -75,6 +78,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\options.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dumb_file_monitor.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

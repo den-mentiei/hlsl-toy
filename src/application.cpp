@@ -103,6 +103,8 @@ bool Application::load_toy(const wchar_t* path) {
 	if (!_toy.init(path)) {
 		return false;
 	}
+	_toy_monitor.stop();
+	_toy_monitor.start(path);
 	return true;
 }
 
@@ -147,6 +149,9 @@ bool Application::work() {
 void Application::update() {
 	_timer.tick();
 	_main_window.update();
+	if (_toy_monitor.changed()) {
+		reload();
+	}
 	update_toy_parameters();
 }
 
@@ -225,7 +230,7 @@ void Application::handle_mouse_up(const unsigned x, const unsigned y, Mouse::But
 }
 
 void Application::reload() {
-	if (!_toy.init(_toy_path.c_str())) {
+	if (!_toy.init(_toy_filename.c_str())) {
 		// TODO: report errors
 		return;
 	}

@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\dumb_file_monitor.cpp" />
     <ClCompile Include="src\dx_render_device.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\options.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="src\application.h" />
     <ClInclude Include="src\com_ptr.h" />
     <ClInclude Include="src\directx.h" />
+    <ClInclude Include="src\dumb_file_monitor.h" />
     <ClInclude Include="src\dx_render_device.h" />
     <ClInclude Include="src\math\types.h" />
     <ClInclude Include="src\math\float2.h" />
