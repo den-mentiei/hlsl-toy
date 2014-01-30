@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "windows.h"
 
 namespace toy {
@@ -36,6 +37,8 @@ public:
 
 	typedef void (*ResizeCallback)(const unsigned w, const unsigned h, void* userdata);
 	void set_resize_callback(ResizeCallback callback, void* userdata);
+
+	std::wstring choose_toy_file_dialog();
 private:
 	void close();
 
